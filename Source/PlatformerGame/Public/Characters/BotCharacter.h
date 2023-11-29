@@ -14,7 +14,12 @@ class PLATFORMERGAME_API ABotCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABotCharacter();
+	virtual void BeginPlay() override;
 	void Move(const float& Direction, const bool& bShouldRun);
+
+	FORCEINLINE float GetWalkSpeed() const { return WalkSpeed; }
+	FORCEINLINE float GetRunSpeed() const { return RunSpeed; }
+	FORCEINLINE bool IsFlipping() const { return bIsFlipping; }
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -22,4 +27,14 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float RunSpeed = 160;
+
+	UPROPERTY(EditAnywhere)
+	float FlipDuration = 0.25f;
+	
+	bool IsFacingForward;
+
+	void Flip();
+	bool bIsFlipping;
+
+	class FCTweenInstanceFloat* FlipTween;
 };
