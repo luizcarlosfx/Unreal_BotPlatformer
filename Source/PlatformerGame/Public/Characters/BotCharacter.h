@@ -14,16 +14,12 @@ class PLATFORMERGAME_API ABotCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABotCharacter();
+	void Move(const float& Direction, const bool& bShouldRun);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+private:
+	UPROPERTY(EditAnywhere)
+	float WalkSpeed = 80;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	UPROPERTY(EditAnywhere)
+	float RunSpeed = 160;
 };

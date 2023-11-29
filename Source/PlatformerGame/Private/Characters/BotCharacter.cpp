@@ -3,32 +3,18 @@
 
 #include "Characters/BotCharacter.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 ABotCharacter::ABotCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
-void ABotCharacter::BeginPlay()
+void ABotCharacter::Move(const float& Direction, const bool& bShouldRun)
 {
-	Super::BeginPlay();
-	
+	const float Speed = bShouldRun ? RunSpeed : WalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = Speed;
+	AddMovementInput(GetActorForwardVector(), Direction * Speed, false);
 }
-
-// Called every frame
-void ABotCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void ABotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
