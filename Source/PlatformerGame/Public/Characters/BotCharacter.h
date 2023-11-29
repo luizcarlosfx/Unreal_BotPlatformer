@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "BotCharacter.generated.h"
 
+class ASideScrollerCameraActor;
+
 UCLASS()
 class PLATFORMERGAME_API ABotCharacter : public ACharacter
 {
@@ -24,13 +26,19 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 80;
-
 	UPROPERTY(EditAnywhere)
 	float RunSpeed = 160;
-
 	UPROPERTY(EditAnywhere)
 	float FlipDuration = 0.25f;
-	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ASideScrollerCameraActor> CameraClass;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* CameraTarget;
+
+	UPROPERTY()
+	ASideScrollerCameraActor* Camera;
+
 	bool IsFacingForward;
 
 	void Flip();
