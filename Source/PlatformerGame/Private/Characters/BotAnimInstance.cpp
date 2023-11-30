@@ -29,4 +29,5 @@ void UBotAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	NormalizedRunSpeed = CurrentVelocity / Bot->GetRunSpeed();
 	InTheAir = Movement->IsFalling();
 	IsWalking = (!InTheAir && Bot->IsFlipping()) || AbsoluteGroundVelocity > 0;
+	IsCrouched = Bot->bIsCrouched;
 }

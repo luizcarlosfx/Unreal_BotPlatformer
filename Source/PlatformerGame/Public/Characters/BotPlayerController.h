@@ -28,22 +28,20 @@ private:
 	UInputMappingContext* InputContext;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
-	UInputAction* MovementInput;
+	UInputAction* MoveAction;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
-	UInputAction* ActionInput;
+	UInputAction* RunAction;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
-	UInputAction* JumpInput;
-	
-	bool IsActionButtonPressed() const;
-	
+	UInputAction* JumpAction;
+
+	void AxisReleased(const FInputActionValue& ActionValue);
 	void AxisChanged(const FInputActionValue& ActionValue);
 	void JumpPressed(const FInputActionValue& ActionValue);
-	void ActionPressed(const FInputActionValue& ActionValue);
+	void RunPressed(const FInputActionValue& ActionValue);
+	void RunReleased(const FInputActionValue& ActionValue);
 
 	UPROPERTY()
 	class ABotCharacter* Bot;
-
-	struct FEnhancedInputActionValueBinding* ActionMappingValue;
 };

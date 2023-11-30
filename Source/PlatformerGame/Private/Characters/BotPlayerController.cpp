@@ -18,9 +18,10 @@ void ABotPlayerController::BeginPlay()
 	Bot = Cast<ABotCharacter>(GetCharacter());
 }
 
-bool ABotPlayerController::IsActionButtonPressed() const
+void ABotPlayerController::AxisReleased(const FInputActionValue& ActionValue)
 {
-	return ActionMappingValue->GetValue().Get<bool>();
+	if (Bot->bIsCrouched)
+		Bot->UnCrouch();
 }
 
 void ABotPlayerController::AxisChanged(const FInputActionValue& ActionValue)
@@ -29,7 +30,18 @@ void ABotPlayerController::AxisChanged(const FInputActionValue& ActionValue)
 	const double MoveDirection = Axis.X;
 
 	if (FMath::Abs(MoveDirection) > 0)
-		Bot->Move(MoveDirection, IsActionButtonPressed());
+		Bot->HorizontalMove(MoveDirection);
+
+	const float& VerticalInput = Axis.Y;
+	const bool bShouldCrouch = VerticalInput < 0;
+
+	if (bShouldCrouch != Bot->bIsCrouched)
+	{
+		if (bShouldCrouch)
+			Bot->Crouch();
+		else
+			Bot->UnCrouch();
+	}
 }
 
 void ABotPlayerController::JumpPressed(const FInputActionValue& ActionValue)
@@ -37,8 +49,14 @@ void ABotPlayerController::JumpPressed(const FInputActionValue& ActionValue)
 	Bot->Jump();
 }
 
-void ABotPlayerController::ActionPressed(const FInputActionValue& ActionValue)
+void ABotPlayerController::RunPressed(const FInputActionValue& ActionValue)
 {
+	Bot->SetRunEnabled(true);
+}
+
+void ABotPlayerController::RunReleased(const FInputActionValue& ActionValue)
+{
+	Bot->SetRunEnabled(false);
 }
 
 void ABotPlayerController::SetupInputComponent()
@@ -50,9 +68,9 @@ void ABotPlayerController::SetupInputComponent()
 	if (!Input)
 		return;
 
-	Input->BindAction(MovementInput, ETriggerEvent::Triggered, this, &ABotPlayerController::AxisChanged);
-	Input->BindAction(JumpInput, ETriggerEvent::Started, this, &ABotPlayerController::JumpPressed);
-	Input->BindAction(ActionInput, ETriggerEvent::Started, this, &ABotPlayerController::ActionPressed);
-
-	ActionMappingValue = &Input->BindActionValue(ActionInput);
+	Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABotPlayerController::AxisChanged);
+	Input->BindAction(MoveAction, ETriggerEvent::Completed, this, &ABotPlayerController::AxisReleased);
+	Input->BindAction(JumpAction, ETriggerEvent::Started, this, &ABotPlayerController::JumpPressed);
+	Input->BindAction(RunAction, ETriggerEvent::Started, this, &ABotPlayerController::RunPressed);
+	Input->BindAction(RunAction, ETriggerEvent::Completed, this, &ABotPlayerController::RunReleased);
 }

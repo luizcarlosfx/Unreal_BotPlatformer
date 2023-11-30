@@ -35,15 +35,14 @@ void ABotCharacter::BeginPlay()
 	Camera->SetTarget(CameraTarget);
 }
 
-void ABotCharacter::Move(const float& Direction, const bool& bShouldRun)
+void ABotCharacter::HorizontalMove(const float& Direction)
 {
 	const bool MoveForward = Direction > 0;
 
 	if (MoveForward != IsFacingForward)
 		Flip();
 
-	const float Speed = bShouldRun ? RunSpeed : WalkSpeed;
-	GetCharacterMovement()->MaxWalkSpeed = Speed;
+	GetCharacterMovement()->MaxWalkSpeed = bRun ? GetRunSpeed() : GetWalkSpeed();
 	AddMovementInput(FVector::ForwardVector, Direction, false);
 }
 

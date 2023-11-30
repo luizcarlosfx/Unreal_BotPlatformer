@@ -17,11 +17,12 @@ public:
 	// Sets default values for this character's properties
 	ABotCharacter();
 	virtual void BeginPlay() override;
-	void Move(const float& Direction, const bool& bShouldRun);
+	void HorizontalMove(const float& Direction);
 
 	FORCEINLINE float GetWalkSpeed() const { return WalkSpeed; }
 	FORCEINLINE float GetRunSpeed() const { return RunSpeed; }
 	FORCEINLINE bool IsFlipping() const { return bIsFlipping; }
+	FORCEINLINE void SetRunEnabled(bool bRunEnabled) { bRun = bRunEnabled; }
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -43,6 +44,7 @@ private:
 
 	void Flip();
 	bool bIsFlipping;
+	bool bRun;
 
 	class FCTweenInstanceFloat* FlipTween;
 };

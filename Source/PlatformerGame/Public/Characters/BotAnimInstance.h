@@ -17,7 +17,7 @@ class PLATFORMERGAME_API UBotAnimInstance : public UAnimInstance
 
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool InTheAir;
@@ -25,6 +25,9 @@ protected:
 	bool IsWalking;
 	UPROPERTY(BlueprintReadOnly)
 	float NormalizedRunSpeed;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool IsCrouched;
 
 	UPROPERTY()
 	ABotCharacter* Bot;
