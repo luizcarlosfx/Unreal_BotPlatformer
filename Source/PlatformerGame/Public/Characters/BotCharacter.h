@@ -17,12 +17,15 @@ public:
 	// Sets default values for this character's properties
 	ABotCharacter();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	void HorizontalMove(const float& Direction);
 
 	FORCEINLINE float GetWalkSpeed() const { return WalkSpeed; }
 	FORCEINLINE float GetRunSpeed() const { return RunSpeed; }
 	FORCEINLINE bool IsFlipping() const { return bIsFlipping; }
 	FORCEINLINE void SetRunEnabled(bool bRunEnabled) { bRun = bRunEnabled; }
+	FORCEINLINE bool DidJumpThisFrame() const { return bJumpedThisFrame; }
+	virtual void OnJumped_Implementation() override;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -31,6 +34,9 @@ private:
 	float RunSpeed = 160;
 	UPROPERTY(EditAnywhere)
 	float FlipDuration = 0.25f;
+	UPROPERTY(EditAnywhere)
+	float JumpMinHoldTime = 0.1;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ASideScrollerCameraActor> CameraClass;
 
@@ -45,6 +51,7 @@ private:
 	void Flip();
 	bool bIsFlipping;
 	bool bRun;
+	bool bJumpedThisFrame;
 
 	class FCTweenInstanceFloat* FlipTween;
 };

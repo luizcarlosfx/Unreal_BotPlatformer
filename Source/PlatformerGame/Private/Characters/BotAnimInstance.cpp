@@ -30,4 +30,5 @@ void UBotAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	InTheAir = Movement->IsFalling();
 	IsWalking = (!InTheAir && Bot->IsFlipping()) || AbsoluteGroundVelocity > 0;
 	IsCrouched = Bot->bIsCrouched;
+	JumpedThisFrame = Bot->DidJumpThisFrame();
 }

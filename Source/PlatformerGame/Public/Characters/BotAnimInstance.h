@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool IsCrouched;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool JumpedThisFrame;
+
 	UPROPERTY()
 	ABotCharacter* Bot;
 	UPROPERTY()

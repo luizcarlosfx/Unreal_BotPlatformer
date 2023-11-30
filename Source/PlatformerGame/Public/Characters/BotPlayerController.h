@@ -39,8 +39,10 @@ private:
 	void AxisReleased(const FInputActionValue& ActionValue);
 	void AxisChanged(const FInputActionValue& ActionValue);
 	void JumpPressed(const FInputActionValue& ActionValue);
+	void JumpReleased(const FInputActionValue& ActionValue);
 	void RunPressed(const FInputActionValue& ActionValue);
 	void RunReleased(const FInputActionValue& ActionValue);
+	void StopJumping();
 
 	UPROPERTY()
 	class ABotCharacter* Bot;

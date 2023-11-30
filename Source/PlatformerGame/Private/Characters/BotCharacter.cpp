@@ -6,7 +6,6 @@
 #include "FCTween.h"
 #include "Camera/SideScrollerCameraActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABotCharacter::ABotCharacter()
@@ -35,6 +34,12 @@ void ABotCharacter::BeginPlay()
 	Camera->SetTarget(CameraTarget);
 }
 
+void ABotCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	bJumpedThisFrame = false;
+}
+
 void ABotCharacter::HorizontalMove(const float& Direction)
 {
 	const bool MoveForward = Direction > 0;
@@ -44,6 +49,12 @@ void ABotCharacter::HorizontalMove(const float& Direction)
 
 	GetCharacterMovement()->MaxWalkSpeed = bRun ? GetRunSpeed() : GetWalkSpeed();
 	AddMovementInput(FVector::ForwardVector, Direction, false);
+}
+
+void ABotCharacter::OnJumped_Implementation()
+{
+	Super::OnJumped_Implementation();
+	bJumpedThisFrame = true;
 }
 
 void ABotCharacter::Flip()

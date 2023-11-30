@@ -47,6 +47,19 @@ void ABotPlayerController::AxisChanged(const FInputActionValue& ActionValue)
 void ABotPlayerController::JumpPressed(const FInputActionValue& ActionValue)
 {
 	Bot->Jump();
+
+	// second jump will always be small
+	if (Bot->JumpCurrentCountPreJump >= 1)
+	{
+		FTimerHandle UnusedHandle;
+		GetWorldTimerManager().SetTimer(
+			UnusedHandle, this, &ABotPlayerController::StopJumping, Bot->JumpMaxHoldTime * 0.5f, false);
+	}
+}
+
+void ABotPlayerController::JumpReleased(const FInputActionValue& ActionValue)
+{
+	StopJumping();
 }
 
 void ABotPlayerController::RunPressed(const FInputActionValue& ActionValue)
@@ -57,6 +70,11 @@ void ABotPlayerController::RunPressed(const FInputActionValue& ActionValue)
 void ABotPlayerController::RunReleased(const FInputActionValue& ActionValue)
 {
 	Bot->SetRunEnabled(false);
+}
+
+void ABotPlayerController::StopJumping()
+{
+	Bot->StopJumping();
 }
 
 void ABotPlayerController::SetupInputComponent()
@@ -71,6 +89,7 @@ void ABotPlayerController::SetupInputComponent()
 	Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABotPlayerController::AxisChanged);
 	Input->BindAction(MoveAction, ETriggerEvent::Completed, this, &ABotPlayerController::AxisReleased);
 	Input->BindAction(JumpAction, ETriggerEvent::Started, this, &ABotPlayerController::JumpPressed);
+	Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ABotPlayerController::JumpReleased);
 	Input->BindAction(RunAction, ETriggerEvent::Started, this, &ABotPlayerController::RunPressed);
 	Input->BindAction(RunAction, ETriggerEvent::Completed, this, &ABotPlayerController::RunReleased);
 }
