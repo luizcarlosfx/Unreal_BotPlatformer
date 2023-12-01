@@ -19,19 +19,19 @@ ABotCharacter::ABotCharacter()
 	Movement->bOrientRotationToMovement = false;
 
 	CameraTarget = CreateDefaultSubobject<USceneComponent>(TEXT("CameraTarget"));
-	CameraTarget->SetupAttachment(CameraTarget);
+	CameraTarget->SetupAttachment(GetRootComponent());
 }
 
 void ABotCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	IsFacingForward = GetActorRotation().Yaw == 0;
+	bIsFacingForward = GetActorRotation().Yaw == 0;
 
 	if (!CameraClass)
 		return;
 
 	Camera = GetWorld()->SpawnActor<ASideScrollerCameraActor>(CameraClass.Get(), GetActorLocation(), FRotator::ZeroRotator);
-	Camera->SetTarget(CameraTarget);
+	Camera->Setup(this);
 }
 
 void ABotCharacter::Tick(float DeltaSeconds)
@@ -44,7 +44,7 @@ void ABotCharacter::HorizontalMove(const float& Direction)
 {
 	const bool MoveForward = Direction > 0;
 
-	if (MoveForward != IsFacingForward)
+	if (MoveForward != bIsFacingForward)
 		Flip();
 
 	GetCharacterMovement()->MaxWalkSpeed = bRun ? GetRunSpeed() : GetWalkSpeed();
@@ -65,14 +65,14 @@ void ABotCharacter::Flip()
 	float StartYaw = 0;
 	float TargetYaw = 180;
 
-	if (!IsFacingForward)
+	if (!bIsFacingForward)
 	{
 		StartYaw = 180;
 		TargetYaw = 0;
 	}
 
 	bIsFlipping = true;
-	IsFacingForward = !IsFacingForward;
+	bIsFacingForward = !bIsFacingForward;
 	auto Setter = [&](const float& NewYaw) { SetActorRotation(FRotator(0, NewYaw, 0)); };
 	FlipTween = FCTween::Play(StartYaw, TargetYaw, Setter, FlipDuration, EFCEase::InOutCubic);
 	FlipTween->SetOnComplete([&]() { bIsFlipping = false; });

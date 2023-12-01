@@ -22,7 +22,15 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void SetTarget(USceneComponent* NewTarget);
+	void Setup(class ABotCharacter* Character);
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* Target;
+
+private:
+	void CalculateGoalLocation();
+	void UpdateCameraLocation(const float& DeltaTime);
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -30,6 +38,20 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
 
+	UPROPERTY(EditAnywhere, Category="Movement")
+	FVector2D DesiredScreenPosition = FVector2D(0.35f, 0.35f);
+
+	UPROPERTY(EditAnywhere, Category="Movement")
+	FVector2D DeadZone = FVector2D(0.25, 0.25f);
+
+	UPROPERTY(EditAnywhere, Category="Movement")
+	float InterpolationSpeed = 5;
+
 	UPROPERTY()
-	USceneComponent* Target;
+	class ABotCharacter* Character;
+
+	UPROPERTY()
+	class APlayerController* Controller;
+
+	FVector GoalLocation;
 };

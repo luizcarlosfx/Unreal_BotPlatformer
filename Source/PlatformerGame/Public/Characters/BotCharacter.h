@@ -25,6 +25,8 @@ public:
 	FORCEINLINE bool IsFlipping() const { return bIsFlipping; }
 	FORCEINLINE void SetRunEnabled(bool bRunEnabled) { bRun = bRunEnabled; }
 	FORCEINLINE bool DidJumpThisFrame() const { return bJumpedThisFrame; }
+	FORCEINLINE bool IsFlipped() const { return !bIsFacingForward; }
+	FORCEINLINE USceneComponent* GetCameraTarget() const { return CameraTarget; }
 	virtual void OnJumped_Implementation() override;
 
 private:
@@ -36,7 +38,7 @@ private:
 	float FlipDuration = 0.25f;
 	UPROPERTY(EditAnywhere)
 	float JumpMinHoldTime = 0.1;
-	
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ASideScrollerCameraActor> CameraClass;
 
@@ -46,7 +48,7 @@ private:
 	UPROPERTY()
 	ASideScrollerCameraActor* Camera;
 
-	bool IsFacingForward;
+	bool bIsFacingForward;
 
 	void Flip();
 	bool bIsFlipping;
