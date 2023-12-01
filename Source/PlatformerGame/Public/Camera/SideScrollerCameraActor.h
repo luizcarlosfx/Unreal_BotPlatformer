@@ -40,12 +40,12 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Movement")
 	FVector2D DesiredScreenPosition = FVector2D(0.35f, 0.35f);
-
 	UPROPERTY(EditAnywhere, Category="Movement")
 	FVector2D DeadZone = FVector2D(0.25, 0.25f);
-
 	UPROPERTY(EditAnywhere, Category="Movement")
-	float InterpolationSpeed = 5;
+	FVector2D SoftZone = FVector2D(0.85, 0.85f);
+	UPROPERTY(EditAnywhere, Category="Movement")
+	FVector2D InterpolationSpeed = FVector2D(2, 4);
 
 	UPROPERTY()
 	class ABotCharacter* Character;
@@ -53,5 +53,9 @@ private:
 	UPROPERTY()
 	class APlayerController* Controller;
 
-	FVector GoalLocation;
+	float GoalX;
+	float GoalZ;
+	bool bIsMovingX;
+	bool bIsMovingZ;
+	bool bIsFirstFrame;
 };

@@ -30,7 +30,7 @@ void ABotCharacter::BeginPlay()
 	if (!CameraClass)
 		return;
 
-	Camera = GetWorld()->SpawnActor<ASideScrollerCameraActor>(CameraClass.Get(), GetActorLocation(), FRotator::ZeroRotator);
+	Camera = GetWorld()->SpawnActor<ASideScrollerCameraActor>(CameraClass.Get());
 	Camera->Setup(this);
 }
 

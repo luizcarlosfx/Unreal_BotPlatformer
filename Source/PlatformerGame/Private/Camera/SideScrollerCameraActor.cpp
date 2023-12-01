@@ -23,15 +23,17 @@ ASideScrollerCameraActor::ASideScrollerCameraActor()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	// update after everything, like unity LateUpdate
+	SetTickGroup(TG_PostUpdateWork);
 }
 
-// Called when the game starts or when spawned
 void ASideScrollerCameraActor::BeginPlay()
 {
 	Super::BeginPlay();
+	bIsFirstFrame = true;
 }
 
-// Called every frame
 void ASideScrollerCameraActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -81,25 +83,65 @@ void ASideScrollerCameraActor::CalculateGoalLocation()
 	UGameplayStatics::DeprojectScreenToWorld(Controller, DesiredScreenPos, TargetWorldPos, TargetWorldDirection);
 
 	// project world position into the 2d plane
-	const FPlane Plane(TargetLocation, FVector::RightVector);
+	const FPlane Plane(FVector::Zero(), FVector::RightVector);
 	const FVector DesiredLocation = FMath::RayPlaneIntersection(TargetWorldPos, TargetWorldDirection, Plane);
 
 	// calculate camera location based on the distance between the target location and the desired location
 	const FVector DeltaMove = TargetLocation - DesiredLocation;
-	FVector CameraLocation = GetActorLocation() + DeltaMove;
+	FVector ActorLocation = GetActorLocation();
+	const FVector CameraLocation = ActorLocation + DeltaMove;
 
-	// if the distance in inside the dead zone for each axis then we can reuse the old camera goal position
-	if (DeltaX <= DeadZone.X)
-		CameraLocation.X = GoalLocation.X;
-	if (DeltaY <= DeadZone.Y)
-		CameraLocation.Z = GoalLocation.Z;
+	// a little trick to move the camera immediately on the first frame
+	if (bIsFirstFrame)
+	{
+		ActorLocation.X = GoalX = CameraLocation.X;
+		ActorLocation.Z = GoalZ = CameraLocation.Z;
 
-	GoalLocation = CameraLocation;
+		SetActorLocation(ActorLocation);
+		bIsFirstFrame = false;
+		return;
+	}
+
+	const FVector& CharacterSpeed = Character->GetVelocity();
+	const bool bCharacterMovingX = FMath::Abs(CharacterSpeed.X) > 0;
+	const bool bCharacterMovingZ = FMath::Abs(CharacterSpeed.Z) > 0;
+
+	const bool bIsOutsideDeadZoneX = DeltaX > DeadZone.X;
+	const bool bIsOutsideDeadZoneY = DeltaY > DeadZone.Y;
+
+	const bool bIsOutsideSoftZoneX = FMath::Abs(TargetScreenPos.X - 0.5f) > SoftZone.X * 0.5f;
+	const bool bIsOutsideSoftZoneY = FMath::Abs(TargetScreenPos.Y - 0.5f) > SoftZone.Y * 0.5f;
+
+	// move only if:
+	// 1 - we are outside of the dead zone 
+	// 2 - we were previously moving the camera and the character is moving
+	// 3 - we are outside of the camera safe zone 
+	if (bIsOutsideDeadZoneX || (bIsMovingX && bCharacterMovingX) || bIsOutsideSoftZoneX)
+	{
+		GoalX = CameraLocation.X;
+		bIsMovingX = true;
+	}
+	else
+	{
+		bIsMovingX = false;
+	}
+
+	if (bIsOutsideDeadZoneY || (bIsMovingZ && bCharacterMovingZ) || bIsOutsideSoftZoneY)
+	{
+		GoalZ = CameraLocation.Z;
+		bIsMovingZ = true;
+	}
+	else
+	{
+		bIsMovingZ = false;
+	}
 }
 
 void ASideScrollerCameraActor::UpdateCameraLocation(const float& DeltaTime)
 {
 	FVector CameraLocation = GetActorLocation();
-	CameraLocation = FMath::VInterpTo(CameraLocation, GoalLocation, DeltaTime, InterpolationSpeed);
+	CameraLocation.X = FMath::FInterpTo(CameraLocation.X, GoalX, DeltaTime, InterpolationSpeed.X);
+	CameraLocation.Z = FMath::FInterpTo(CameraLocation.Z, GoalZ, DeltaTime, InterpolationSpeed.Y);
+	
 	SetActorLocation(CameraLocation);
 }
