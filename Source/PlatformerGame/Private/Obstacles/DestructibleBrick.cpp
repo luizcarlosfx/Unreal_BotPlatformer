@@ -47,6 +47,17 @@ void ADestructibleBrick::BeginPlay()
 	BoxCollision->OnComponentHit.AddDynamic(this, &ADestructibleBrick::OnHit);
 }
 
+void ADestructibleBrick::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (!bIsDestroyed)
+		return;
+
+	UniformVector->SetUniformVector(ExtraGravity, FVector::DownVector);
+	// add upwards velocity
+	FieldSystem->ApplyPhysicsField(true, EFieldPhysicsType::Field_LinearForce, nullptr, UniformVector);
+}
+
 
 void ADestructibleBrick::Break()
 {

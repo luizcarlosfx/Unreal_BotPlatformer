@@ -15,6 +15,7 @@ public:
 	ADestructibleBrick();
 	UFUNCTION()
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -40,6 +41,8 @@ private:
 	class USoundBase* BreakSound;
 	UPROPERTY(EditAnywhere)
 	float BreakLifespan = 3;
+	UPROPERTY(EditAnywhere)
+	float ExtraGravity = 100;
 	
 	bool bIsDestroyed;
 };
