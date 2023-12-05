@@ -6,6 +6,8 @@
 #include "FCTween.h"
 #include "Camera/SideScrollerCameraActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Items/ThrowableActor.h"
+
 
 // Sets default values
 ABotCharacter::ABotCharacter()
@@ -55,6 +57,36 @@ void ABotCharacter::OnJumped_Implementation()
 {
 	Super::OnJumped_Implementation();
 	bJumpedThisFrame = true;
+}
+
+void ABotCharacter::ThrowObject()
+{
+	if (!ThrowObjectClass || bIsThrowing || bIsCrouched)
+		return;
+
+	UAnimInstance* AnimationInstance = GetMesh()->GetAnimInstance();
+	if (!AnimationInstance || !ThrowMontage)
+		return;
+
+	// Spawn Object and Attach to the Hand
+	ThrowItem = Cast<AThrowableActor>(GetWorld()->SpawnActor(ThrowObjectClass));
+	ThrowItem->SetPhysicsEnabled(false);
+	ThrowItem->AttachTo(GetMesh(), ThrowSocketName);
+
+	AnimationInstance->Montage_Play(ThrowMontage);
+	bIsThrowing = true;
+}
+
+void ABotCharacter::ThrowObjectRelease()
+{
+	ThrowItem->Detach();
+	ThrowItem->SetPhysicsEnabled(true);
+	const FVector& Forward = IsFlipped() ? FVector::BackwardVector : FVector::ForwardVector;
+	FVector Direction = Forward;
+	Direction.Normalize();
+	const FVector& Impulse = Direction * ThrowForce;
+	ThrowItem->Throw(GetMesh()->GetPhysicsLinearVelocity(), Impulse);
+	bIsThrowing = false;
 }
 
 void ABotCharacter::Flip()

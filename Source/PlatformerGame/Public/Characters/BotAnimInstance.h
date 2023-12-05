@@ -15,8 +15,12 @@ class PLATFORMERGAME_API UBotAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
+public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	UFUNCTION(BlueprintCallable)
+	void Notify_ReleaseObject() const;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -32,7 +36,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool JumpedThisFrame;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	ABotCharacter* Bot;
 	UPROPERTY()
 	UCharacterMovementComponent* Movement;

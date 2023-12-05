@@ -7,6 +7,7 @@
 #include "BotCharacter.generated.h"
 
 class ASideScrollerCameraActor;
+class AThrowableActor;
 
 UCLASS()
 class PLATFORMERGAME_API ABotCharacter : public ACharacter
@@ -29,6 +30,11 @@ public:
 	FORCEINLINE USceneComponent* GetCameraTarget() const { return CameraTarget; }
 	virtual void OnJumped_Implementation() override;
 
+	void ThrowObject();
+
+	UFUNCTION(BlueprintCallable)
+	void ThrowObjectRelease();
+
 private:
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 80;
@@ -45,15 +51,26 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* CameraTarget;
 
-	UPROPERTY()
-	ASideScrollerCameraActor* Camera;
+	UPROPERTY(EditAnywhere, Category=Throwing)
+	UAnimMontage* ThrowMontage;
+	UPROPERTY(EditAnywhere, Category=Throwing)
+	FName ThrowSocketName = "RightHandSocket";
+	UPROPERTY(EditAnywhere, Category=Throwing)
+	float ThrowForce = 1000;
+	UPROPERTY(EditAnywhere, Category=Throwing)
+	TSubclassOf<class AThrowableActor> ThrowObjectClass;
 
 	bool bIsFacingForward;
-
 	void Flip();
 	bool bIsFlipping;
 	bool bRun;
 	bool bJumpedThisFrame;
-
 	class FCTweenInstanceFloat* FlipTween;
+	bool bIsThrowing;
+	
+	UPROPERTY()
+	ASideScrollerCameraActor* Camera;
+
+	UPROPERTY()
+	AThrowableActor* ThrowItem;
 };

@@ -37,6 +37,8 @@ void ASideScrollerCameraActor::BeginPlay()
 void ASideScrollerCameraActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if(!Target)
+		return;
 	CalculateGoalLocation();
 	UpdateCameraLocation(DeltaTime);
 }

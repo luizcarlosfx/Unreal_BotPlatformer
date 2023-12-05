@@ -65,6 +65,7 @@ void ABotPlayerController::JumpReleased(const FInputActionValue& ActionValue)
 void ABotPlayerController::RunPressed(const FInputActionValue& ActionValue)
 {
 	Bot->SetRunEnabled(true);
+	Bot->ThrowObject();
 }
 
 void ABotPlayerController::RunReleased(const FInputActionValue& ActionValue)

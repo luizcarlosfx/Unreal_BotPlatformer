@@ -32,3 +32,8 @@ void UBotAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	IsCrouched = Bot->bIsCrouched;
 	JumpedThisFrame = Bot->DidJumpThisFrame();
 }
+
+void UBotAnimInstance::Notify_ReleaseObject() const
+{
+	Bot->ThrowObjectRelease();
+}

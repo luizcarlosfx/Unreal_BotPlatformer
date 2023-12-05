@@ -23,6 +23,7 @@ class PLATFORMERGAME_API ABotPlayerController : public APlayerController
 public:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputMappingContext* InputContext;
