@@ -4,7 +4,6 @@
 #include "Characters/BotCharacter.h"
 
 #include "FCTween.h"
-#include "Camera/SideScrollerCameraActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/ThrowableActor.h"
 
@@ -28,12 +27,6 @@ void ABotCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	bIsFacingForward = GetActorRotation().Yaw == 0;
-
-	if (!CameraClass)
-		return;
-
-	Camera = GetWorld()->SpawnActor<ASideScrollerCameraActor>(CameraClass.Get());
-	Camera->Setup(this);
 }
 
 void ABotCharacter::Tick(float DeltaSeconds)

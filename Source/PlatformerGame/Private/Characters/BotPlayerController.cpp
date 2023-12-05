@@ -4,18 +4,24 @@
 #include "Characters/BotPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/SideScrollerCameraActor.h"
 #include "Characters/BotCharacter.h"
 
 void ABotPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("Begin Play"));
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(InputContext, 0);
 	}
 
 	Bot = Cast<ABotCharacter>(GetCharacter());
+
+	if (!CameraClass)
+		return;
+
+	SideScrollerCamera = GetWorld()->SpawnActor<ASideScrollerCameraActor>(CameraClass.Get());
+	SideScrollerCamera->Setup(this, Bot);
 }
 
 void ABotPlayerController::AxisReleased(const FInputActionValue& ActionValue)

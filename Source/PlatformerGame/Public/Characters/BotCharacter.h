@@ -45,9 +45,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float JumpMinHoldTime = 0.1;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ASideScrollerCameraActor> CameraClass;
-
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* CameraTarget;
 
@@ -67,9 +64,6 @@ private:
 	bool bJumpedThisFrame;
 	class FCTweenInstanceFloat* FlipTween;
 	bool bIsThrowing;
-	
-	UPROPERTY()
-	ASideScrollerCameraActor* Camera;
 
 	UPROPERTY()
 	AThrowableActor* ThrowItem;

@@ -37,17 +37,17 @@ void ASideScrollerCameraActor::BeginPlay()
 void ASideScrollerCameraActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if(!Target)
+	if (!Target)
 		return;
 	CalculateGoalLocation();
 	UpdateCameraLocation(DeltaTime);
 }
 
-void ASideScrollerCameraActor::Setup(ABotCharacter* TargetCharacter)
+void ASideScrollerCameraActor::Setup(APlayerController* PlayerController, ABotCharacter* TargetCharacter)
 {
 	Character = TargetCharacter;
 	Target = TargetCharacter->GetCameraTarget();
-	Controller = Cast<APlayerController>(Character->GetController());
+	Controller = PlayerController;
 	Controller->SetViewTarget(this);
 }
 
@@ -144,6 +144,6 @@ void ASideScrollerCameraActor::UpdateCameraLocation(const float& DeltaTime)
 	FVector CameraLocation = GetActorLocation();
 	CameraLocation.X = FMath::FInterpTo(CameraLocation.X, GoalX, DeltaTime, InterpolationSpeed.X);
 	CameraLocation.Z = FMath::FInterpTo(CameraLocation.Z, GoalZ, DeltaTime, InterpolationSpeed.Y);
-	
+
 	SetActorLocation(CameraLocation);
 }

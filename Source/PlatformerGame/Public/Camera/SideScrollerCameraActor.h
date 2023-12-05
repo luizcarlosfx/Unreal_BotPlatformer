@@ -22,7 +22,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void Setup(class ABotCharacter* Character);
+	void Setup(APlayerController* PlayerController, class ABotCharacter* Character);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

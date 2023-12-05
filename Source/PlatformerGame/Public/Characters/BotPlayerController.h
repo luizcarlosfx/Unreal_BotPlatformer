@@ -14,6 +14,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class ASideScrollerCameraActor;
 
 UCLASS()
 class PLATFORMERGAME_API ABotPlayerController : public APlayerController
@@ -37,6 +38,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputAction* JumpAction;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ASideScrollerCameraActor> CameraClass;
+
 	void AxisReleased(const FInputActionValue& ActionValue);
 	void AxisChanged(const FInputActionValue& ActionValue);
 	void JumpPressed(const FInputActionValue& ActionValue);
@@ -47,4 +51,7 @@ private:
 
 	UPROPERTY()
 	class ABotCharacter* Bot;
+
+	UPROPERTY()
+	ASideScrollerCameraActor* SideScrollerCamera;
 };
