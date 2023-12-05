@@ -2,8 +2,6 @@
 
 
 #include "Characters/BotCharacter.h"
-
-#include "FCTween.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/ThrowableActor.h"
 
@@ -23,27 +21,10 @@ ABotCharacter::ABotCharacter()
 	CameraTarget->SetupAttachment(GetRootComponent());
 }
 
-void ABotCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	bIsFacingForward = GetActorRotation().Yaw == 0;
-}
-
 void ABotCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	bJumpedThisFrame = false;
-}
-
-void ABotCharacter::HorizontalMove(const float& Direction)
-{
-	const bool MoveForward = Direction > 0;
-
-	if (MoveForward != bIsFacingForward)
-		Flip();
-
-	GetCharacterMovement()->MaxWalkSpeed = bRun ? GetRunSpeed() : GetWalkSpeed();
-	AddMovementInput(FVector::ForwardVector, Direction, false);
 }
 
 void ABotCharacter::OnJumped_Implementation()
@@ -82,25 +63,4 @@ void ABotCharacter::ThrowObjectRelease()
 	Velocity.Z = Velocity.Y = 0;
 	ThrowItem->Throw(Velocity, Impulse);
 	bIsThrowing = false;
-}
-
-void ABotCharacter::Flip()
-{
-	if (FlipTween)
-		FlipTween->Destroy();
-
-	float StartYaw = 0;
-	float TargetYaw = 180;
-
-	if (!bIsFacingForward)
-	{
-		StartYaw = 180;
-		TargetYaw = 0;
-	}
-
-	bIsFlipping = true;
-	bIsFacingForward = !bIsFacingForward;
-	auto Setter = [&](const float& NewYaw) { SetActorRotation(FRotator(0, NewYaw, 0)); };
-	FlipTween = FCTween::Play(StartYaw, TargetYaw, Setter, FlipDuration, EFCEase::InOutCubic);
-	FlipTween->SetOnComplete([&]() { bIsFlipping = false; });
 }
