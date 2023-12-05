@@ -85,7 +85,9 @@ void ABotCharacter::ThrowObjectRelease()
 	FVector Direction = Forward;
 	Direction.Normalize();
 	const FVector& Impulse = Direction * ThrowForce;
-	ThrowItem->Throw(GetMesh()->GetPhysicsLinearVelocity(), Impulse);
+	FVector Velocity = GetMesh()->GetPhysicsLinearVelocity();
+	Velocity.Z = Velocity.Y = 0;
+	ThrowItem->Throw(Velocity, Impulse);
 	bIsThrowing = false;
 }
 
