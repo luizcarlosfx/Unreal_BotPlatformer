@@ -15,11 +15,8 @@ class PLATFORMERGAME_API AGoombaCharacter : public ABasePlatformerCharacter
 	GENERATED_BODY()
 
 public:
+	AGoombaCharacter();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
-
-private:
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-	UPrimitiveComponent* LastHit
+	virtual void MoveBlockedBy(const FHitResult& Impact) override;
 };

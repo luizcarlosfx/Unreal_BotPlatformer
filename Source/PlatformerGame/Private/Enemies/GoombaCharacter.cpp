@@ -6,33 +6,36 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+
+AGoombaCharacter::AGoombaCharacter()
+{
+}
+
 void AGoombaCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AGoombaCharacter::OnHit);
+	GetCharacterMovement()->PerchRadiusThreshold = GetCapsuleComponent()->GetScaledCapsuleRadius();
 }
 
 void AGoombaCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	const bool bCanWalk = GetCharacterMovement()->CurrentFloor.IsWalkableFloor();
+	const UCharacterMovementComponent* Movement = GetCharacterMovement();
+	const bool bCanWalk = Movement->CheckLedgeDirection(GetActorLocation(), GetVelocity() * 0.5f,
+	                                                    FVector::DownVector);
+	if (!bCanWalk && !IsFlipping())
+		Flip();
 
-	int Direction = IsFlipped() ? -1 : 1;
-
-	// flip
-	if (!bCanWalk)
-		Direction *= -1;
-
+	const int Direction = IsFlipped() ? -1 : 1;
 	HorizontalMove(Direction);
 }
 
-void AGoombaCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AGoombaCharacter::MoveBlockedBy(const FHitResult& Impact)
 {
-	if (IsFlipping())
-		return;
+	Super::MoveBlockedBy(Impact);
 
 	const FVector& Forward = GetActorForwardVector();
-	const FVector& Normal = Hit.ImpactNormal;
+	const FVector& Normal = Impact.ImpactNormal;
 
 	if (FVector::DotProduct(Forward, Normal) < 0)
 		Flip();
