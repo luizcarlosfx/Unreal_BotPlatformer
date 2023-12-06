@@ -55,7 +55,7 @@ private:
 
 	float GoalX;
 	float GoalZ;
-	bool bIsMovingX;
-	bool bIsMovingZ;
+	bool bIsOutsideSoftZoneX;
+	bool bIsOutsideSoftZoneY;
 	bool bIsFirstFrame;
 };

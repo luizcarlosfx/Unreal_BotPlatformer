@@ -24,7 +24,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	void Flip();
+	
 private:
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 225;
@@ -34,8 +35,7 @@ private:
 	float FlipDuration = 0.25f;
 	
 	bool bIsFacingForward;
-	void Flip();
 	bool bIsFlipping;
-	bool bRun;
+	bool bRun = false;
 	class FCTweenInstanceFloat* FlipTween;
 };
