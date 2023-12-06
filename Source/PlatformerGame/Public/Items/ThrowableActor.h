@@ -22,23 +22,26 @@ protected:
 
 public:
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	virtual void Throw(const FVector& InheritedVelocity, const FVector& Impulse);
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void Throw(APawn* OwnerPawn, const FVector& InheritedVelocity, const FVector& Impulse);
 	virtual void SetPhysicsEnabled(const bool& bEnablePhysics);
-	void AttachTo(USceneComponent* AttachTo, const FName& SocketName) const;
-	void Detach() const;
+	void AttachTo(USceneComponent* AttachTo, const FName& SocketName);
+	void Detach();
 
 private:
 	void Explode();
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
+	void Bounce(const FVector& Normal) const;
 private:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
+	UPROPERTY(EditAnywhere)
+	float GravityScale = 2;
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* ExplodeEffect;
 
 	FVector LastVelocity;
+	bool bIsAttached = false;
 };

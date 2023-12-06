@@ -22,6 +22,7 @@ public:
 	FORCEINLINE bool DidJumpThisFrame() const { return bJumpedThisFrame; }
 	FORCEINLINE USceneComponent* GetCameraTarget() const { return CameraTarget; }
 	virtual void OnJumped_Implementation() override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 	void ThrowObject();
 	

@@ -24,15 +24,22 @@ void AThrowableActor::BeginPlay()
 }
 
 // Called every frame
-void AThrowableActor::Tick(float DeltaTime)
+void AThrowableActor::Tick(float DeltaSeconds)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaSeconds);
 	LastVelocity = Mesh->GetPhysicsLinearVelocity();
-	// Mesh->SetPhysicsLinearVelocity(MoveDirection * Speed);
+	if (bIsAttached)
+		return;
+
+	//apply gravity manually
+	const float Force = GetWorld()->GetGravityZ() * Mesh->GetMass() * GravityScale;
+	Mesh->AddForce(FVector::UpVector * Force);
 }
 
-void AThrowableActor::Throw(const FVector& InheritedVelocity, const FVector& Impulse)
+void AThrowableActor::Throw(APawn* OwnerPawn, const FVector& InheritedVelocity, const FVector& Impulse)
 {
+	SetOwner(OwnerPawn);
+	SetInstigator(OwnerPawn);
 	Mesh->SetPhysicsLinearVelocity(InheritedVelocity);
 	Mesh->AddImpulse(Impulse, NAME_None, true);
 }
@@ -43,16 +50,18 @@ void AThrowableActor::SetPhysicsEnabled(const bool& bEnablePhysics)
 	Mesh->SetSimulatePhysics(bEnablePhysics);
 }
 
-void AThrowableActor::AttachTo(USceneComponent* AttachTo, const FName& SocketName) const
+void AThrowableActor::AttachTo(USceneComponent* AttachTo, const FName& SocketName)
 {
 	const FAttachmentTransformRules Rules(EAttachmentRule::SnapToTarget, false);
 	Mesh->AttachToComponent(AttachTo, Rules, SocketName);
+	bIsAttached = true;
 }
 
-void AThrowableActor::Detach() const
+void AThrowableActor::Detach()
 {
 	const FDetachmentTransformRules Rules(EDetachmentRule::KeepWorld, false);
 	Mesh->DetachFromComponent(Rules);
+	bIsAttached = false;
 }
 
 void AThrowableActor::Explode()
@@ -65,11 +74,30 @@ void AThrowableActor::Explode()
 
 void AThrowableActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	const FVector& Normal = Hit.ImpactNormal;
-	if (FMath::Abs(Normal.X) > FMath::Abs(Normal.Z))
+	if (!OtherActor)
+		return;
+
+	if (OtherActor->CanBeDamaged())
 	{
+		UGameplayStatics::ApplyDamage(OtherActor, 100, GetInstigator()->GetController(), this, UDamageType::StaticClass());
 		Explode();
+		return;
 	}
+
+	const FVector& Normal = Hit.ImpactNormal;
+
+	const double Dot = FVector::DotProduct(FVector::UpVector, Normal);
+	const double AngleRadians = FMath::Acos(Dot);
+	const double AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
+
+	if(AngleDegrees > 45)
+		Explode();
+
+	Bounce(Normal);
+}
+
+void AThrowableActor::Bounce(const FVector& Normal) const
+{
 	FVector Velocity = LastVelocity;
 	Velocity = FMath::GetReflectionVector(Velocity, Normal);
 	Mesh->SetPhysicsLinearVelocity(Velocity);

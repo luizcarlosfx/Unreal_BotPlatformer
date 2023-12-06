@@ -14,6 +14,7 @@ class PLATFORMERGAME_API ABasePlatformerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABasePlatformerCharacter();
+	ABasePlatformerCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void HorizontalMove(const float& Direction);
 	FORCEINLINE bool IsFlipping() const { return bIsFlipping; }
 	FORCEINLINE bool IsFlipped() const { return !bIsFacingForward; }

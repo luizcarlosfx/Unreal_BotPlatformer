@@ -4,6 +4,7 @@
 #include "Characters/BotCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/ThrowableActor.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -32,6 +33,18 @@ void ABotCharacter::OnJumped_Implementation()
 	bJumpedThisFrame = true;
 }
 
+void ABotCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	AActor* Actor = Hit.GetActor();
+
+	if (Actor && Actor->CanBeDamaged())
+	{
+		UGameplayStatics::ApplyDamage(Actor, 100, GetController(), this, UDamageType::StaticClass());
+		GetCharacterMovement()->AddImpulse(FVector::UpVector * 100, true);
+	}
+}
+
 void ABotCharacter::ThrowObject()
 {
 	if (!ThrowObjectClass || bIsThrowing || bIsCrouched)
@@ -54,12 +67,12 @@ void ABotCharacter::ThrowObjectRelease()
 {
 	ThrowItem->Detach();
 	ThrowItem->SetPhysicsEnabled(true);
-	const FVector& Forward = IsFlipped() ? FVector::BackwardVector : FVector::ForwardVector;
+	const FVector Forward = IsFlipped() ? FVector::BackwardVector : FVector::ForwardVector;
 	FVector Direction = Forward;
 	Direction.Normalize();
 	const FVector& Impulse = Direction * ThrowForce;
 	FVector Velocity = GetMesh()->GetPhysicsLinearVelocity();
 	Velocity.Z = Velocity.Y = 0;
-	ThrowItem->Throw(Velocity, Impulse);
+	ThrowItem->Throw(this, Velocity, Impulse);
 	bIsThrowing = false;
 }

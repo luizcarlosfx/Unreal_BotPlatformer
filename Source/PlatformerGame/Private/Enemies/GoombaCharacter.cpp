@@ -2,41 +2,22 @@
 
 
 #include "Enemies/GoombaCharacter.h"
-
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-
-
-AGoombaCharacter::AGoombaCharacter()
-{
-}
-
-void AGoombaCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	GetCharacterMovement()->PerchRadiusThreshold = GetCapsuleComponent()->GetScaledCapsuleRadius();
-}
+#include "FCTween.h"
 
 void AGoombaCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	const UCharacterMovementComponent* Movement = GetCharacterMovement();
-	const bool bCanWalk = Movement->CheckLedgeDirection(GetActorLocation(), GetVelocity() * 0.5f,
-	                                                    FVector::DownVector);
-	if (!bCanWalk && !IsFlipping())
-		Flip();
-
 	const int Direction = IsFlipped() ? -1 : 1;
 	HorizontalMove(Direction);
 }
 
-void AGoombaCharacter::MoveBlockedBy(const FHitResult& Impact)
+float AGoombaCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::MoveBlockedBy(Impact);
+	if (bIsDead)
+		return 0;
 
-	const FVector& Forward = GetActorForwardVector();
-	const FVector& Normal = Impact.ImpactNormal;
-
-	if (FVector::DotProduct(Forward, Normal) < 0)
-		Flip();
+	bIsDead = true;
+	FCTween::Play(GetActorScale(), FVector::ZeroVector, [&](const FVector& Scale) { SetActorRelativeScale3D(Scale); }, 0.15f)
+		->SetOnComplete([&]() { Destroy(); });
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }

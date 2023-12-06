@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseEnemyCharacter.h"
 #include "Characters/BasePlatformerCharacter.h"
 #include "GoombaCharacter.generated.h"
 
@@ -10,13 +11,14 @@
  * 
  */
 UCLASS()
-class PLATFORMERGAME_API AGoombaCharacter : public ABasePlatformerCharacter
+class PLATFORMERGAME_API AGoombaCharacter : public ABaseEnemyCharacter
 {
 	GENERATED_BODY()
 
 public:
-	AGoombaCharacter();
-	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
-	virtual void MoveBlockedBy(const FHitResult& Impact) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+	bool bIsDead = false;
 };

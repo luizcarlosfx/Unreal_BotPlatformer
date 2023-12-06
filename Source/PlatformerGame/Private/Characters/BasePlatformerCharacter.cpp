@@ -15,6 +15,15 @@ ABasePlatformerCharacter::ABasePlatformerCharacter()
 	Movement->SetPlaneConstraintNormal(FVector(0, 1, 0));
 	Movement->bUseControllerDesiredRotation = false;
 	Movement->bOrientRotationToMovement = false;
+
+	// I don't want to receive extra forces on my character when colliding
+	Movement->bEnablePhysicsInteraction = false;
+	Movement->bConstrainToPlane = true;
+	Movement->SetPlaneConstraintNormal(FVector::RightVector);
+}
+
+ABasePlatformerCharacter::ABasePlatformerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
 }
 
 void ABasePlatformerCharacter::BeginPlay()
