@@ -24,7 +24,7 @@ public:
 	virtual void OnJumped_Implementation() override;
 
 	void ThrowObject();
-
+	
 	UFUNCTION(BlueprintCallable)
 	void ThrowObjectRelease();
 

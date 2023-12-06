@@ -16,7 +16,6 @@ ABotCharacter::ABotCharacter()
 	Movement->SetPlaneConstraintNormal(FVector(0, 1, 0));
 	Movement->bUseControllerDesiredRotation = false;
 	Movement->bOrientRotationToMovement = false;
-
 	CameraTarget = CreateDefaultSubobject<USceneComponent>(TEXT("CameraTarget"));
 	CameraTarget->SetupAttachment(GetRootComponent());
 }

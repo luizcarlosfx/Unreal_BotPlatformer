@@ -104,46 +104,33 @@ void ASideScrollerCameraActor::CalculateGoalLocation()
 		return;
 	}
 
-	const FVector& CharacterSpeed = Character->GetVelocity();
-	const bool bCharacterMovingX = FMath::Abs(CharacterSpeed.X) > 0;
-	const bool bCharacterMovingZ = FMath::Abs(CharacterSpeed.Z) > 0;
-
 	const bool bIsOutsideDeadZoneX = DeltaX > DeadZone.X;
 	const bool bIsOutsideDeadZoneY = DeltaY > DeadZone.Y;
 
-	const bool bIsOutsideSoftZoneX = FMath::Abs(TargetScreenPos.X - 0.5f) > SoftZone.X * 0.5f;
-	const bool bIsOutsideSoftZoneY = FMath::Abs(TargetScreenPos.Y - 0.5f) > SoftZone.Y * 0.5f;
+	bIsOutsideSoftZoneX = FMath::Abs(TargetScreenPos.X - 0.5f) > SoftZone.X * 0.5f;
+	bIsOutsideSoftZoneY = FMath::Abs(TargetScreenPos.Y - 0.5f) > SoftZone.Y * 0.5f;
 
-	// move only if:
-	// 1 - we are outside of the dead zone 
-	// 2 - we were previously moving the camera and the character is moving
-	// 3 - we are outside of the camera safe zone 
-	if (bIsOutsideDeadZoneX || (bIsMovingX && bCharacterMovingX) || bIsOutsideSoftZoneX)
-	{
+	if (bIsOutsideDeadZoneX || bIsOutsideSoftZoneX)
 		GoalX = CameraLocation.X;
-		bIsMovingX = true;
-	}
-	else
-	{
-		bIsMovingX = false;
-	}
 
-	if (bIsOutsideDeadZoneY || (bIsMovingZ && bCharacterMovingZ) || bIsOutsideSoftZoneY)
-	{
+	if (bIsOutsideDeadZoneY || bIsOutsideSoftZoneY)
 		GoalZ = CameraLocation.Z;
-		bIsMovingZ = true;
-	}
-	else
-	{
-		bIsMovingZ = false;
-	}
 }
 
 void ASideScrollerCameraActor::UpdateCameraLocation(const float& DeltaTime)
 {
 	FVector CameraLocation = GetActorLocation();
-	CameraLocation.X = FMath::FInterpTo(CameraLocation.X, GoalX, DeltaTime, InterpolationSpeed.X);
-	CameraLocation.Z = FMath::FInterpTo(CameraLocation.Z, GoalZ, DeltaTime, InterpolationSpeed.Y);
+
+	float XSpeed = InterpolationSpeed.X;
+	if (bIsOutsideSoftZoneX)
+		XSpeed *= 2;
+
+	float YSpeed = InterpolationSpeed.Y;
+	if (bIsOutsideSoftZoneY)
+		YSpeed *= 2;
+
+	CameraLocation.X = FMath::FInterpTo(CameraLocation.X, GoalX, DeltaTime, XSpeed);
+	CameraLocation.Z = FMath::FInterpTo(CameraLocation.Z, GoalZ, DeltaTime, YSpeed);
 
 	SetActorLocation(CameraLocation);
 }
