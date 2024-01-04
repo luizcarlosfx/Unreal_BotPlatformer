@@ -50,8 +50,7 @@ void ABotCharacter::ThrowObject()
 	if (!ThrowObjectClass || bIsThrowing || bIsCrouched)
 		return;
 
-	UAnimInstance* AnimationInstance = GetMesh()->GetAnimInstance();
-	if (!AnimationInstance || !ThrowMontage)
+	if (!PlayMontage(ThrowMontage))
 		return;
 
 	// Spawn Object and Attach to the Hand
@@ -59,7 +58,6 @@ void ABotCharacter::ThrowObject()
 	ThrowItem->SetPhysicsEnabled(false);
 	ThrowItem->AttachTo(GetMesh(), ThrowSocketName);
 
-	AnimationInstance->Montage_Play(ThrowMontage);
 	bIsThrowing = true;
 }
 
@@ -75,4 +73,24 @@ void ABotCharacter::ThrowObjectRelease()
 	Velocity.Z = Velocity.Y = 0;
 	ThrowItem->Throw(this, Velocity, Impulse);
 	bIsThrowing = false;
+}
+
+float ABotCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (bIsDead)
+		return 0;
+
+	bIsDead = true;
+	PlayMontage(DeathMontage);
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+bool ABotCharacter::PlayMontage(UAnimMontage* Montage) const
+{
+	UAnimInstance* AnimationInstance = GetMesh()->GetAnimInstance();
+	if (!AnimationInstance || !Montage)
+		return false;
+
+	AnimationInstance->Montage_Play(Montage);
+	return true;
 }

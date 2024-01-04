@@ -25,9 +25,11 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 
 	void ThrowObject();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ThrowObjectRelease();
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -50,4 +52,11 @@ private:
 
 	UPROPERTY()
 	AThrowableActor* ThrowItem;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* DeathMontage;
+	
+	bool bIsDead = false;
+
+	bool PlayMontage(UAnimMontage* Montage) const;
 };
