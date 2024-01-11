@@ -4,6 +4,7 @@
 #include "Items/ThrowableActor.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AThrowableActor::AThrowableActor()
@@ -38,6 +39,7 @@ void AThrowableActor::Tick(float DeltaSeconds)
 
 void AThrowableActor::Throw(APawn* OwnerPawn, const FVector& InheritedVelocity, const FVector& Impulse)
 {
+	BounceImpulse = Impulse.Length() * BounceMultiplier;
 	SetOwner(OwnerPawn);
 	SetInstigator(OwnerPawn);
 	Mesh->SetPhysicsLinearVelocity(InheritedVelocity);
@@ -90,15 +92,34 @@ void AThrowableActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	const double AngleRadians = FMath::Acos(Dot);
 	const double AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
 
-	if(AngleDegrees > 45)
+	if (BounceCount >= MaxBounces || AngleDegrees > 80)
+	{
 		Explode();
-
-	Bounce(Normal);
+	}
+	else
+	{
+		BounceCount++;
+		Bounce(Normal);
+	}
 }
 
 void AThrowableActor::Bounce(const FVector& Normal) const
 {
-	FVector Velocity = LastVelocity;
-	Velocity = FMath::GetReflectionVector(Velocity, Normal);
+	const float VelocityXSign = FMath::Sign(LastVelocity.X);
+	FVector Direction = FVector(VelocityXSign, 0, FMath::Sign(LastVelocity.Z));
+	Direction.Normalize();
+	Direction = FMath::GetReflectionVector(Direction, FVector::UpVector);
+
+	// the idea behind all this math is to keep the jump height visually the same no matter where it's boucing
+	// adds normal X to the velocity Z
+	float NormalBoost = FMath::Abs(Normal.X) * BounceNormalBoost;
+
+	// if the normal is pointing to the same direction as the velocity then I want a smaller "jump"
+	if (VelocityXSign == FMath::Sign(Normal.X))
+		NormalBoost *= -1;
+
+	Direction.Z += NormalBoost;
+
+	const FVector& Velocity = Direction * BounceImpulse;
 	Mesh->SetPhysicsLinearVelocity(Velocity);
 }

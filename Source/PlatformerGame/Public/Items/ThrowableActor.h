@@ -38,10 +38,20 @@ private:
 	UStaticMeshComponent* Mesh;
 	UPROPERTY(EditAnywhere)
 	float GravityScale = 2;
+	UPROPERTY(EditAnywhere)
+	float BounceMultiplier = 1.25f;
+	UPROPERTY(EditAnywhere)
+	float BounceNormalBoost = 0.35f;
+	
+	UPROPERTY(EditAnywhere)
+	int MaxBounces = 5;
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* ExplodeEffect;
 
 	FVector LastVelocity;
 	bool bIsAttached = false;
+
+	float BounceImpulse;
+	int BounceCount = 0;
 };
