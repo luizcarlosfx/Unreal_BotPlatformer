@@ -6,6 +6,34 @@
 #include "GameFramework/Actor.h"
 #include "SideScrollerCameraActor.generated.h"
 
+class ACameraConfigTrigger;
+
+USTRUCT(BlueprintType)
+struct FCameraBounds
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	bool UseMinX = false;
+	UPROPERTY(EditAnywhere)
+	float MinX = 0;
+
+	UPROPERTY(EditAnywhere)
+	bool UseMaxX = false;
+	UPROPERTY(EditAnywhere)
+	float MaxX = 0;
+
+	UPROPERTY(EditAnywhere)
+	bool UseMinZ = false;
+	UPROPERTY(EditAnywhere)
+	float MinZ = 0;
+
+	UPROPERTY(EditAnywhere)
+	bool UseMaxZ = false;
+	UPROPERTY(EditAnywhere)
+	float MaxZ = 0;
+};
+
 UCLASS()
 class PLATFORMERGAME_API ASideScrollerCameraActor : public AActor
 {
@@ -31,12 +59,21 @@ protected:
 private:
 	void CalculateGoalLocation();
 	void UpdateCameraLocation(const float& DeltaTime);
+	void SetGoalX(const float& value);
+	void SetGoalZ(const float& value);
+	void InitializeTriggers();
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+						   const FHitResult& SweepResult);
+	void SetTrigger(const ACameraConfigTrigger* Trigger);
 
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* SphereCollision;
 
 	UPROPERTY(EditAnywhere, Category="Movement")
 	FVector2D DesiredScreenPosition = FVector2D(0.35f, 0.35f);
@@ -52,6 +89,9 @@ private:
 
 	UPROPERTY()
 	class APlayerController* Controller;
+
+	UPROPERTY(EditAnywhere)
+	FCameraBounds Bounds;
 
 	float GoalX;
 	float GoalZ;

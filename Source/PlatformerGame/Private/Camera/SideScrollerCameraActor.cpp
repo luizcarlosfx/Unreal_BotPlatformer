@@ -8,6 +8,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Camera/CameraConfigTrigger.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 ASideScrollerCameraActor::ASideScrollerCameraActor()
@@ -24,12 +26,16 @@ ASideScrollerCameraActor::ASideScrollerCameraActor()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
+	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	SphereCollision->SetupAttachment(GetRootComponent());
+
 	// update after everything, like unity LateUpdate
 	SetTickGroup(TG_PostUpdateWork);
 }
 
 void ASideScrollerCameraActor::BeginPlay()
 {
+	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ASideScrollerCameraActor::OnOverlapBegin);
 	Super::BeginPlay();
 	bIsFirstFrame = true;
 }
@@ -39,6 +45,10 @@ void ASideScrollerCameraActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!Target)
 		return;
+
+	if (bIsFirstFrame)
+		InitializeTriggers();
+
 	CalculateGoalLocation();
 	UpdateCameraLocation(DeltaTime);
 }
@@ -96,8 +106,11 @@ void ASideScrollerCameraActor::CalculateGoalLocation()
 	// a little trick to move the camera immediately on the first frame
 	if (bIsFirstFrame)
 	{
-		ActorLocation.X = GoalX = CameraLocation.X;
-		ActorLocation.Z = GoalZ = CameraLocation.Z;
+		SetGoalX(CameraLocation.X);
+		SetGoalZ(CameraLocation.Z);
+
+		ActorLocation.Z = GoalZ;
+		ActorLocation.X = GoalX;
 
 		SetActorLocation(ActorLocation);
 		bIsFirstFrame = false;
@@ -111,10 +124,10 @@ void ASideScrollerCameraActor::CalculateGoalLocation()
 	bIsOutsideSoftZoneY = FMath::Abs(TargetScreenPos.Y - 0.5f) > SoftZone.Y * 0.5f;
 
 	if (bIsOutsideDeadZoneX || bIsOutsideSoftZoneX)
-		GoalX = CameraLocation.X;
+		SetGoalX(CameraLocation.X);
 
 	if (bIsOutsideDeadZoneY || bIsOutsideSoftZoneY)
-		GoalZ = CameraLocation.Z;
+		SetGoalZ(CameraLocation.Z);
 }
 
 void ASideScrollerCameraActor::UpdateCameraLocation(const float& DeltaTime)
@@ -133,4 +146,57 @@ void ASideScrollerCameraActor::UpdateCameraLocation(const float& DeltaTime)
 	CameraLocation.Z = FMath::FInterpTo(CameraLocation.Z, GoalZ, DeltaTime, YSpeed);
 
 	SetActorLocation(CameraLocation);
+}
+
+void ASideScrollerCameraActor::SetGoalX(const float& value)
+{
+	GoalX = value;
+
+	if (Bounds.UseMinX && GoalX < Bounds.MinX)
+		GoalX = Bounds.MinX;
+
+	if (Bounds.UseMaxX && GoalX > Bounds.MaxX)
+		GoalX = Bounds.MaxX;
+}
+
+void ASideScrollerCameraActor::SetGoalZ(const float& value)
+{
+	GoalZ = value;
+
+	if (Bounds.UseMinZ && GoalZ < Bounds.MinZ)
+		GoalZ = Bounds.MinZ;
+
+	if (Bounds.UseMaxZ && GoalZ > Bounds.MaxZ)
+		GoalZ = Bounds.MaxZ;
+}
+
+void ASideScrollerCameraActor::InitializeTriggers()
+{
+	TArray<AActor*> Triggers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraConfigTrigger::StaticClass(), Triggers);
+
+	for (AActor* Actor : Triggers)
+	{
+		const ACameraConfigTrigger* Trigger = Cast<ACameraConfigTrigger>(Actor);
+		if (SphereCollision->IsOverlappingActor(Trigger))
+			SetTrigger(Trigger);
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("dAMN,,,,,,"));
+	}
+}
+
+void ASideScrollerCameraActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                              bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->Tags.Contains(ACameraConfigTrigger::Tag))
+	{
+		if (const ACameraConfigTrigger* Trigger = Cast<ACameraConfigTrigger>(OtherActor))
+			SetTrigger(Trigger);
+	}
+}
+
+void ASideScrollerCameraActor::SetTrigger(const ACameraConfigTrigger* Trigger)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, Trigger->GetActorLabel());
+	Bounds = Trigger->GetCameraBounds();
 }
