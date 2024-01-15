@@ -54,9 +54,6 @@ private:
 	UPROPERTY()
 	AThrowableActor* ThrowItem;
 
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* DeathMontage;
-
 	bool bIsDead = false;
 
 	bool PlayMontage(UAnimMontage* Montage) const;
