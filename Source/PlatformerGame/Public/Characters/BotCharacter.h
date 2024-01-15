@@ -30,6 +30,7 @@ public:
 	void ThrowObjectRelease();
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	FORCEINLINE bool IsDead() const { return bIsDead; }
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -55,7 +56,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* DeathMontage;
-	
+
 	bool bIsDead = false;
 
 	bool PlayMontage(UAnimMontage* Montage) const;

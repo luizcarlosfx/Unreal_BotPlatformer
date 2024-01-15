@@ -81,7 +81,9 @@ float ABotCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		return 0;
 
 	bIsDead = true;
-	PlayMontage(DeathMontage);
+	// PlayMontage(DeathMontage);
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+		PlayerController->DisableInput(PlayerController);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 

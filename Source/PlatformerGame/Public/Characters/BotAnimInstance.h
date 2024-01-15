@@ -31,6 +31,9 @@ protected:
 	float NormalizedRunSpeed;
 
 	UPROPERTY(BlueprintReadOnly)
+	bool IsAlive;
+	
+	UPROPERTY(BlueprintReadOnly)
 	bool IsCrouched;
 
 	UPROPERTY(BlueprintReadOnly)
