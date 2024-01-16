@@ -36,6 +36,8 @@ public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	FORCEINLINE bool IsDead() const { return bIsDead; }
 
+	bool PlayMontage(UAnimMontage* Montage) const;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float JumpMinHoldTime = 0.1;
@@ -59,6 +61,4 @@ private:
 	AThrowableActor* ThrowItem;
 
 	bool bIsDead = false;
-
-	bool PlayMontage(UAnimMontage* Montage) const;
 };
