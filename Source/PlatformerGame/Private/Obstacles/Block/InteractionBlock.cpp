@@ -32,7 +32,7 @@ void AInteractionBlock::BeginPlay()
 
 void AInteractionBlock::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (!OtherActor->ActorHasTag("Player"))
+	if (!OtherActor || !OtherActor->ActorHasTag("Player"))
 		return;
 
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor))
