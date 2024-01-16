@@ -9,12 +9,16 @@
 class ASideScrollerCameraActor;
 class AThrowableActor;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDie);
+
 UCLASS()
 class PLATFORMERGAME_API ABotCharacter : public ABasePlatformerCharacter
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category="Events")
+	FOnDie OnDie;
 	// Sets default values for this character's properties
 	ABotCharacter();
 	virtual void Tick(float DeltaSeconds) override;
