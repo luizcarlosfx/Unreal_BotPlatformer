@@ -35,6 +35,17 @@ ABreakableBlock::ABreakableBlock()
 	UniformVector->SetUniformVector(300, FVector::UpVector);
 }
 
+void ABreakableBlock::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (!bIsBroken)
+		return;
+
+	UniformVector->SetUniformVector(ExtraGravity, FVector::DownVector);
+	// add upwards velocity
+	FieldSystem->ApplyPhysicsField(true, EFieldPhysicsType::Field_LinearForce, nullptr, UniformVector);
+}
+
 void ABreakableBlock::OnPlayerHit()
 {
 	Super::OnPlayerHit();

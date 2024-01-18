@@ -14,8 +14,10 @@ class PLATFORMERGAME_API ABreakableBlock : public AInteractionBlock
 {
 	GENERATED_BODY()
 
+public:
 	ABreakableBlock();
-
+	virtual void Tick(float DeltaSeconds) override;
+	
 protected:
 	virtual void OnPlayerHit() override;
 	FORCEINLINE UGeometryCollectionComponent* GetGeometry() const { return Geometry; }
