@@ -27,5 +27,5 @@ void UBotCollectablesManager::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 	const ACollectableGearItem* Gear = Cast<ACollectableGearItem>(OtherActor);
 
 	if (Gear && PlayerState)
-		PlayerState->CollectGears(1);
+		PlayerState->CollectGears(Gear->GetAmount());
 }

@@ -8,10 +8,12 @@ void APlatformerPlayerState::CollectGears(uint32 amount)
 {
 	Gears += amount;
 	if (Gears >= 100)
+	{
 		Gears -= 100;
+		AdjustLife(1);
+	}
 
 	OnCollectGear.Broadcast(Gears);
-	AdjustLife(1);
 }
 
 void APlatformerPlayerState::AdjustLife(int amount)

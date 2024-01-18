@@ -13,5 +13,11 @@ UCLASS()
 class PLATFORMERGAME_API ACollectableGearItem : public ACollectableItem
 {
 	GENERATED_BODY()
-	
+
+public:
+	FORCEINLINE uint32 GetAmount() const { return Amount; }
+
+private:
+	UPROPERTY(EditAnywhere)
+	uint32 Amount = 1;
 };
