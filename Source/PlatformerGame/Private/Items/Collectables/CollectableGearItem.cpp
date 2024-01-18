@@ -3,3 +3,7 @@
 
 #include "Items/Collectables/CollectableGearItem.h"
 
+ECollectableType ACollectableGearItem::GetType()
+{
+	return ECT_Coin;
+}

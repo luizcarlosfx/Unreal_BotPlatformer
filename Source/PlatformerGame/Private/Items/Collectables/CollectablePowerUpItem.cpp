@@ -3,3 +3,7 @@
 
 #include "Items/Collectables/CollectablePowerUpItem.h"
 
+ECollectableType ACollectablePowerUpItem::GetType()
+{
+	return ECT_PowerUp;
+}

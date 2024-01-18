@@ -6,7 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "CollectableItem.generated.h"
 
-UCLASS()
+UENUM()
+enum ECollectableType
+{
+	ECT_None,
+	ECT_Coin,
+	ECT_PowerUp
+};
+
+UCLASS(Abstract)
 class PLATFORMERGAME_API ACollectableItem : public AActor
 {
 	GENERATED_BODY()
@@ -14,6 +22,11 @@ class PLATFORMERGAME_API ACollectableItem : public AActor
 public:
 	ACollectableItem();
 	virtual void OnCollected();
+
+	virtual ECollectableType GetType()
+	{
+		return ECT_None;
+	}
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

@@ -16,7 +16,7 @@ class PLATFORMERGAME_API ACollectableGearItem : public ACollectableItem
 
 public:
 	FORCEINLINE uint32 GetAmount() const { return Amount; }
-
+	virtual ECollectableType GetType() override;
 private:
 	UPROPERTY(EditAnywhere)
 	uint32 Amount = 1;

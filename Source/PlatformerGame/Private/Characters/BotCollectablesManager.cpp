@@ -4,10 +4,12 @@
 #include "Characters/BotCollectablesManager.h"
 
 #include "Characters/BotCharacter.h"
+#include "Characters/Abilities/BaseBotAbility.h"
 #include "Components/CapsuleComponent.h"
 #include "Game/PlatformerPlayerState.h"
 #include "Items/Collectables/CollectableGearItem.h"
 #include "Items/Collectables/CollectableItem.h"
+#include "Items/Collectables/CollectablePowerUpItem.h"
 
 void UBotCollectablesManager::BeginPlay()
 {
@@ -24,8 +26,21 @@ void UBotCollectablesManager::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 	ACollectableItem* Collectable = Cast<ACollectableItem>(OtherActor);
 	Collectable->OnCollected();
 
-	const ACollectableGearItem* Gear = Cast<ACollectableGearItem>(OtherActor);
-
-	if (Gear && PlayerState)
+	if (Collectable->GetType() == ECT_Coin && PlayerState)
+	{
+		const ACollectableGearItem* Gear = Cast<ACollectableGearItem>(OtherActor);
 		PlayerState->CollectGears(Gear->GetAmount());
+	}
+	else if (Collectable->GetType() == ECT_PowerUp)
+	{
+		const ACollectablePowerUpItem* PowerUp = Cast<ACollectablePowerUpItem>(OtherActor);
+
+		if (PowerUp && PowerUp->GetBotAbilityClass())
+		{
+			UActorComponent* SpawnedComponent = Character->AddComponentByClass(PowerUp->GetBotAbilityClass(), false, FTransform::Identity, false);
+			UBaseBotAbility* SpawnedAbility = Cast<UBaseBotAbility>(SpawnedComponent);
+
+			
+		}
+	}
 }

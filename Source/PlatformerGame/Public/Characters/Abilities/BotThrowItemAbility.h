@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PLATFORMERGAME_API UBotThrowItemAbility : public UBaseBotAbility
 {
 	GENERATED_BODY()

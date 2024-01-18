@@ -27,7 +27,7 @@ protected:
 	FORCEINLINE bool IsCrouched() const { return Character->bIsCrouched; }
 	FORCEINLINE USkinnedMeshComponent* GetMesh() const { return Character->GetMesh(); }
 	FORCEINLINE UCharacterMovementComponent* GetCharacterMovement() const { return Character->GetCharacterMovement(); }
-	FORCEINLINE UMaterial* GetCharacterMaterial() const { return CharacterMaterial; }
+	FORCEINLINE UMaterialInstance* GetCharacterMaterial() const { return CharacterMaterial; }
 
 	bool PlayMontage(UAnimMontage* Montage) const;
 
@@ -36,5 +36,5 @@ private:
 	ABotCharacter* Character;
 
 	UPROPERTY(EditAnywhere)
-	UMaterial* CharacterMaterial;
+	UMaterialInstance* CharacterMaterial;
 };
