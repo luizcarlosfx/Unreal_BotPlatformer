@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Game/PlatformerPlayerState.h"
 #include "BotCollectablesManager.generated.h"
 
 
@@ -21,4 +22,8 @@ protected:
 private:
 	UPROPERTY()
 	class ABotCharacter* Character;
+	UPROPERTY()
+	class APlayerController* PlayerController;
+	UPROPERTY()
+	APlatformerPlayerState* PlayerState;
 };

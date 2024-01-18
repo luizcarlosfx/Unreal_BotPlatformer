@@ -2,10 +2,12 @@
 
 #include "Game/PlatformerPlayerState.h"
 
+#include "Kismet/GameplayStatics.h"
+
 void APlatformerPlayerState::CollectGears(uint32 amount)
 {
 	Gears += amount;
-	if (Gears > 100)
+	if (Gears >= 100)
 		Gears -= 100;
 
 	OnCollectGear.Broadcast(Gears);
@@ -14,6 +16,8 @@ void APlatformerPlayerState::CollectGears(uint32 amount)
 
 void APlatformerPlayerState::AdjustLife(int amount)
 {
+	if (amount > 0)
+		OnGainLife.Broadcast(Lives);
+
 	Lives = FMath::Clamp(Lives + amount, 0, 99);
-	OnGainLife.Broadcast(Lives);
 }

@@ -7,6 +7,7 @@
 #include "PlatformerPlayerState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCollectGear, int, Gears);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGainLife, int, Lives);
 
 /**
@@ -16,7 +17,6 @@ UCLASS()
 class PLATFORMERGAME_API APlatformerPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
 
 public:
 	UPROPERTY(BlueprintAssignable, Category="Events")
@@ -35,6 +35,8 @@ public:
 	FORCEINLINE int GetGears() const { return Gears; }
 
 private:
+	UPROPERTY(VisibleAnywhere)
 	int Lives = 5;
+	UPROPERTY(VisibleAnywhere)
 	int Gears = 0;
 };
