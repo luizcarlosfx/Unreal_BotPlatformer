@@ -4,6 +4,7 @@
 #include "Items/Collectables/CollectableItem.h"
 
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ACollectableItem::ACollectableItem()
 {
@@ -23,5 +24,10 @@ ACollectableItem::ACollectableItem()
 
 void ACollectableItem::OnCollected()
 {
+	if (CollectedSound)
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CollectedSound, GetActorLocation());
+
+	if (CollectEffect)
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), CollectEffect, GetActorLocation());
 	Destroy();
 }

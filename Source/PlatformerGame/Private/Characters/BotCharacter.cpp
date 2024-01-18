@@ -2,6 +2,8 @@
 
 
 #include "Characters/BotCharacter.h"
+
+#include "Characters/BotCollectablesManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/ThrowableActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,6 +14,7 @@ ABotCharacter::ABotCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	CollectablesManager = CreateDefaultSubobject<UBotCollectablesManager>(TEXT("CollectablesManager"));
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->bConstrainToPlane = true;
 	Movement->SetPlaneConstraintNormal(FVector(0, 1, 0));

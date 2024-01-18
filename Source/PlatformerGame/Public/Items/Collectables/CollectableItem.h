@@ -10,16 +10,21 @@ UCLASS()
 class PLATFORMERGAME_API ACollectableItem : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ACollectableItem();
+	virtual void OnCollected();
 
 protected:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* SphereCollision;
 
-	virtual void OnCollected();
+	UPROPERTY(EditAnywhere)
+	class USoundBase* CollectedSound;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* CollectEffect;
 };

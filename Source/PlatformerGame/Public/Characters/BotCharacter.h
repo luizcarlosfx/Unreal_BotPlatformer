@@ -39,6 +39,8 @@ public:
 	bool PlayMontage(UAnimMontage* Montage) const;
 
 private:
+	UPROPERTY(VisibleAnywhere)
+	class UBotCollectablesManager* CollectablesManager;
 	UPROPERTY(EditAnywhere)
 	float JumpMinHoldTime = 0.1;
 
