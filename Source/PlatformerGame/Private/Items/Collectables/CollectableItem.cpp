@@ -3,23 +3,43 @@
 
 #include "Items/Collectables/CollectableItem.h"
 
+#include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ACollectableItem::ACollectableItem()
 {
-	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	SphereCollision->SetCollisionObjectType(ECC_WorldDynamic);
-	SphereCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
-	SphereCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	SphereCollision->SetGenerateOverlapEvents(true);
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
+	BoxCollider->SetSimulatePhysics(true);
+	BoxCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BoxCollider->SetCollisionObjectType(ECC_WorldDynamic);
+	BoxCollider->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	BoxCollider->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
-	SetRootComponent(SphereCollision);
+	SetRootComponent(BoxCollider);
+
+	SphereTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	SphereTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SphereTrigger->SetCollisionObjectType(ECC_WorldDynamic);
+	SphereTrigger->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereTrigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	SphereTrigger->SetGenerateOverlapEvents(true);
+	SphereTrigger->SetupAttachment(BoxCollider);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(SphereCollision);
+	Mesh->SetupAttachment(BoxCollider);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ACollectableItem::BeginPlay()
+{
+	Super::BeginPlay();
+	if (!bUsePhysics)
+	{
+		BoxCollider->SetSimulatePhysics(false);
+		BoxCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 void ACollectableItem::OnCollected()
@@ -30,4 +50,24 @@ void ACollectableItem::OnCollected()
 	if (CollectEffect)
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), CollectEffect, GetActorLocation());
 	Destroy();
+}
+
+void ACollectableItem::OnSpawned()
+{
+}
+
+void ACollectableItem::SetPhysicsEnabled(bool Enable)
+{
+	SphereTrigger->SetCollisionEnabled(Enable ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+
+	if (!bUsePhysics)
+		return;
+
+	Internal_SetPhysicsEnabled(Enable);
+}
+
+void ACollectableItem::Internal_SetPhysicsEnabled(bool Enable) const
+{
+	BoxCollider->SetSimulatePhysics(Enable);
+	BoxCollider->SetCollisionEnabled(Enable ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
 }

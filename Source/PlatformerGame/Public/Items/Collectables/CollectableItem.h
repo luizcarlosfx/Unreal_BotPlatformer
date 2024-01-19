@@ -21,7 +21,12 @@ class PLATFORMERGAME_API ACollectableItem : public AActor
 
 public:
 	ACollectableItem();
+	virtual void SetPhysicsEnabled(bool Enable);
+	virtual void BeginPlay() override;
 	virtual void OnCollected();
+	virtual void OnSpawned();
+
+	FORCEINLINE bool GetAutoCollectOnSpawn() const { return bAutoCollectOnSpawn; }
 
 	virtual ECollectableType GetType()
 	{
@@ -33,11 +38,27 @@ protected:
 	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
-	class USphereComponent* SphereCollision;
+	class USphereComponent* SphereTrigger;
 
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* BoxCollider;
+
+private:
 	UPROPERTY(EditAnywhere)
 	class USoundBase* CollectedSound;
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* CollectEffect;
+
+	UPROPERTY(EditAnywhere)
+	bool bUsePhysics = true;
+
+	UPROPERTY(EditAnywhere)
+	bool bAutoCollectOnSpawn = false;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* SpawnSound;
+
+private:
+	void Internal_SetPhysicsEnabled(bool Enable) const;
 };

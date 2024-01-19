@@ -4,29 +4,30 @@
 
 #include "CoreMinimal.h"
 #include "Obstacles/Block/InteractionBlock.h"
-#include "BounceBlock.generated.h"
+#include "SpawnItemBlock.generated.h"
 
+class ACollectableItem;
 /**
  * 
  */
 UCLASS()
-class PLATFORMERGAME_API ABounceBlock : public AInteractionBlock
+class PLATFORMERGAME_API ASpawnItemBlock : public AInteractionBlock
 {
 	GENERATED_BODY()
 
 public:
-	ABounceBlock();
+	ASpawnItemBlock();
 	virtual void BeginPlay() override;
 
 protected:
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }
-	void SetInteractionEnabled(bool Enable);
 	virtual void Bounce(const FVector& Direction);
-	virtual void BounceComplete();
+	virtual void SpawnItem();
 	virtual void OnPlayerHit() override;
 
 private:
-	virtual void Tween(const FVector& TargetLocation, float Time, TFunction<void()> OnComplete = nullptr);
+	virtual void TweenMesh(const FVector& TargetLocation, float Time, TFunction<void()> OnComplete = nullptr);
+	virtual void TweenItemLocation(const FVector& TargetLocation, float Time, TFunction<void()> OnComplete = nullptr);
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -35,11 +36,20 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	float BounceTime = 0.15f;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ACollectableItem> ItemClass;
+
+	UPROPERTY(EditAnywhere)
+	int SpawnItems = 1;
+
 	UPROPERTY()
 	UMaterialInterface* DefaultMaterial;
 
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* NoInteractionMaterial;
 
-	bool bInteractionEnabled = true;
+	int SpawnCount = 0;
+
+	UPROPERTY()
+	ACollectableItem* SpawnedItem;
 };

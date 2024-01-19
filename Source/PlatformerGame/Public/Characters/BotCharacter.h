@@ -6,6 +6,7 @@
 #include "BasePlatformerCharacter.h"
 #include "BotCharacter.generated.h"
 
+class UBotCollectablesManager;
 class ASideScrollerCameraActor;
 class UBotThrowComponent;
 class UBotPowerUpManager;
@@ -35,10 +36,11 @@ public:
 
 	bool PlayMontage(UAnimMontage* Montage) const;
 	FORCEINLINE UBotPowerUpManager* GetPowerUpManager() const { return PowerUpManager; }
+	FORCEINLINE UBotCollectablesManager* GetCollectablesManager() const { return CollectablesManager; }
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	class UBotCollectablesManager* CollectablesManager;
+	UBotCollectablesManager* CollectablesManager;
 	UPROPERTY(VisibleAnywhere)
 	UBotPowerUpManager* PowerUpManager;
 	UPROPERTY(VisibleAnywhere)

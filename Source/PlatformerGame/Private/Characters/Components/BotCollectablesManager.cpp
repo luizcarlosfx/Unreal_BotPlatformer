@@ -21,24 +21,32 @@ void UBotCollectablesManager::BeginPlay()
 	PlayerState = PlayerController->GetPlayerState<APlatformerPlayerState>();
 }
 
-void UBotCollectablesManager::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-                                             bool bFromSweep, const FHitResult& SweepResult)
+void UBotCollectablesManager::Collect(ACollectableItem* Collectable) const
 {
-	ACollectableItem* Collectable = Cast<ACollectableItem>(OtherActor);
+	if (!Collectable)
+		return;
+
 	Collectable->OnCollected();
 
 	if (Collectable->GetType() == ECT_Coin && PlayerState)
 	{
-		const ACollectableGearItem* Gear = Cast<ACollectableGearItem>(OtherActor);
+		const ACollectableGearItem* Gear = Cast<ACollectableGearItem>(Collectable);
 		PlayerState->CollectGears(Gear->GetAmount());
 	}
 	else if (Collectable->GetType() == ECT_PowerUp)
 	{
-		const ACollectablePowerUpItem* PowerUp = Cast<ACollectablePowerUpItem>(OtherActor);
+		const ACollectablePowerUpItem* PowerUp = Cast<ACollectablePowerUpItem>(Collectable);
 
 		if (PowerUp && PowerUp->GetPowerUpClass())
 		{
 			GetCharacter()->GetPowerUpManager()->CollectPowerUp(PowerUp->GetPowerUpClass());
 		}
 	}
+}
+
+void UBotCollectablesManager::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                             bool bFromSweep, const FHitResult& SweepResult)
+{
+	ACollectableItem* Collectable = Cast<ACollectableItem>(OtherActor);
+	Collect(Collectable);
 }
