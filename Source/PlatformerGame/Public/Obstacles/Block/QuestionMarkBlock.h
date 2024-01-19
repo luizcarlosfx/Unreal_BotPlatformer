@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SolidMeshBlock.h"
+#include "BounceBlock.h"
 #include "QuestionMarkBlock.generated.h"
 
 class ACollectableItem;
@@ -11,12 +11,12 @@ class ACollectableItem;
  * 
  */
 UCLASS()
-class PLATFORMERGAME_API AQuestionMarkBlock : public ASolidMeshBlock
+class PLATFORMERGAME_API AQuestionMarkBlock : public ABounceBlock
 {
 	GENERATED_BODY()
 
 protected:
-	virtual void OnPlayerHit() override;
+	virtual void BounceComplete() override;
 
 private:
 	UPROPERTY(EditAnywhere)

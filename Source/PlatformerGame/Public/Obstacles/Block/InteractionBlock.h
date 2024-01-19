@@ -27,8 +27,6 @@ protected:
 
 	FORCEINLINE UBoxComponent* GetBoxCollision() const { return BoxCollision; }
 
-public:
-
 private:
 	UPROPERTY(VisibleAnywhere)
 	UBoxComponent* BoxCollision;

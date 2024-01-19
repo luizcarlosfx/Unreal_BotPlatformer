@@ -3,8 +3,8 @@
 
 #include "Obstacles/Block/QuestionMarkBlock.h"
 
-void AQuestionMarkBlock::OnPlayerHit()
+void AQuestionMarkBlock::BounceComplete()
 {
-	Super::OnPlayerHit();
+	Super::BounceComplete();
 	SetInteractionEnabled(false);
 }

@@ -4,27 +4,36 @@
 
 #include "CoreMinimal.h"
 #include "Obstacles/Block/InteractionBlock.h"
-#include "SolidMeshBlock.generated.h"
+#include "BounceBlock.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PLATFORMERGAME_API ASolidMeshBlock : public AInteractionBlock
+class PLATFORMERGAME_API ABounceBlock : public AInteractionBlock
 {
 	GENERATED_BODY()
 
 public:
-	ASolidMeshBlock();
+	ABounceBlock();
 	virtual void BeginPlay() override;
 
 protected:
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }
 	void SetInteractionEnabled(bool Enable);
+	virtual void Bounce(const FVector& Direction);
+	virtual void BounceComplete();
+	virtual void OnPlayerHit() override;
+
+private:
+	virtual void Tween(const FVector& TargetLocation, float Time, TFunction<void()> OnComplete = nullptr);
 
 private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere)
+	float BounceTime = 0.15f;
 
 	UPROPERTY()
 	UMaterialInterface* DefaultMaterial;
@@ -32,5 +41,5 @@ private:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* NoInteractionMaterial;
 
-	bool InteractionEnabled = true;
+	bool bInteractionEnabled = true;
 };

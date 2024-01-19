@@ -51,8 +51,6 @@ void AInteractionBlock::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		PlayerCharacter->StopJumping();
 		OnPlayerHit();
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, Hit.ImpactNormal.GetSafeNormal().ToString());
 }
 
 void AInteractionBlock::OnPlayerHit()
