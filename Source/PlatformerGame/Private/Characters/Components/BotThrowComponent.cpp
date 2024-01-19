@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/Abilities/BotThrowItemAbility.h"
+#include "Characters/Components/BotThrowComponent.h"
 
 #include "Items/ThrowableActor.h"
 
-void UBotThrowItemAbility::ThrowObject()
+void UBotThrowComponent::ThrowObject()
 {
 	if (!ThrowObjectClass || bIsThrowing || IsCrouched())
 		return;
@@ -22,7 +22,7 @@ void UBotThrowItemAbility::ThrowObject()
 }
 
 
-void UBotThrowItemAbility::ThrowObjectRelease()
+void UBotThrowComponent::ThrowObjectRelease()
 {
 	ThrowItem->Detach();
 	ThrowItem->SetPhysicsEnabled(true);
@@ -34,4 +34,9 @@ void UBotThrowItemAbility::ThrowObjectRelease()
 	Velocity.Z = Velocity.Y = 0;
 	ThrowItem->Throw(GetCharacter(), Velocity, Impulse);
 	bIsThrowing = false;
+}
+
+void UBotThrowComponent::SetThrowableClass(TSubclassOf<AThrowableActor> ThrowableClass)
+{
+	ThrowObjectClass = ThrowableClass;
 }

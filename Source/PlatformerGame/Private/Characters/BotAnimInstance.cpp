@@ -4,6 +4,7 @@
 #include "Characters/BotAnimInstance.h"
 
 #include "Characters/BotCharacter.h"
+#include "Characters/Components/BotThrowComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UBotAnimInstance::NativeInitializeAnimation()
@@ -36,5 +37,5 @@ void UBotAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UBotAnimInstance::Notify_ReleaseObject() const
 {
-	Bot->ThrowObjectRelease();
+	Bot->GetThrowBehaviour()->ThrowObjectRelease();
 }

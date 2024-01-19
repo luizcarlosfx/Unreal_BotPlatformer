@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/Abilities/BaseBotAbility.h"
-#include "BotThrowItemAbility.generated.h"
+#include "Characters/Components/BaseBotComponent.h"
+#include "BotThrowComponent.generated.h"
 
+class AThrowableActor;
 /**
  * 
  */
 UCLASS(Blueprintable)
-class PLATFORMERGAME_API UBotThrowItemAbility : public UBaseBotAbility
+class PLATFORMERGAME_API UBotThrowComponent : public UBaseBotComponent
 {
 	GENERATED_BODY()
 
@@ -21,6 +22,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ThrowObjectRelease();
 
+	void SetThrowableClass(TSubclassOf<AThrowableActor> ThrowableClass);
 private:
 	UPROPERTY(EditAnywhere, Category=Throwing)
 	UAnimMontage* ThrowMontage;
@@ -29,7 +31,7 @@ private:
 	UPROPERTY(EditAnywhere, Category=Throwing)
 	float ThrowForce = 700;
 	UPROPERTY(EditAnywhere, Category=Throwing)
-	TSubclassOf<class AThrowableActor> ThrowObjectClass;
+	TSubclassOf<AThrowableActor> ThrowObjectClass;
 
 	bool bIsThrowing;
 	UPROPERTY()

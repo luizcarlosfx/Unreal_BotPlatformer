@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseBotComponent.h"
 #include "Components/ActorComponent.h"
 #include "Game/PlatformerPlayerState.h"
 #include "BotCollectablesManager.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PLATFORMERGAME_API UBotCollectablesManager : public UActorComponent
+class PLATFORMERGAME_API UBotCollectablesManager : public UBaseBotComponent
 {
 	GENERATED_BODY()
 
@@ -20,8 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY()
-	class ABotCharacter* Character;
 	UPROPERTY()
 	class APlayerController* PlayerController;
 	UPROPERTY()

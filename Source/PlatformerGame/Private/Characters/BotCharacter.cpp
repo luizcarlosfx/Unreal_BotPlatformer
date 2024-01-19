@@ -3,9 +3,10 @@
 
 #include "Characters/BotCharacter.h"
 
-#include "Characters/BotCollectablesManager.h"
+#include "Characters/Components/BotCollectablesManager.h"
+#include "Characters/Components/BotPowerUpManager.h"
+#include "Characters/Components/BotThrowComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Items/ThrowableActor.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -15,6 +16,8 @@ ABotCharacter::ABotCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CollectablesManager = CreateDefaultSubobject<UBotCollectablesManager>(TEXT("CollectablesManager"));
+	ThrowComponent = CreateDefaultSubobject<UBotThrowComponent>(TEXT("ThrowComponent"));
+	PowerUpManager = CreateDefaultSubobject<UBotPowerUpManager>(TEXT("PowerUpManager"));
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->bConstrainToPlane = true;
 	Movement->SetPlaneConstraintNormal(FVector(0, 1, 0));
@@ -48,40 +51,23 @@ void ABotCharacter::Landed(const FHitResult& Hit)
 	}
 }
 
-void ABotCharacter::ThrowObject()
-{
-	if (!ThrowObjectClass || bIsThrowing || bIsCrouched)
-		return;
-
-	if (!PlayMontage(ThrowMontage))
-		return;
-
-	// Spawn Object and Attach to the Hand
-	ThrowItem = Cast<AThrowableActor>(GetWorld()->SpawnActor(ThrowObjectClass));
-	ThrowItem->SetPhysicsEnabled(false);
-	ThrowItem->AttachTo(GetMesh(), ThrowSocketName);
-
-	bIsThrowing = true;
-}
-
-void ABotCharacter::ThrowObjectRelease()
-{
-	ThrowItem->Detach();
-	ThrowItem->SetPhysicsEnabled(true);
-	const FVector Forward = IsFlipped() ? FVector::BackwardVector : FVector::ForwardVector;
-	FVector Direction = Forward;
-	Direction.Normalize();
-	const FVector& Impulse = Direction * ThrowForce;
-	FVector Velocity = GetMesh()->GetPhysicsLinearVelocity();
-	Velocity.Z = Velocity.Y = 0;
-	ThrowItem->Throw(this, Velocity, Impulse);
-	bIsThrowing = false;
-}
-
 float ABotCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	if (bIsDead)
 		return 0;
+
+	const double Time = GetWorld()->TimeSeconds;
+
+	if (Time - LastDamageTime < DamageInterval)
+		return 0;
+
+	LastDamageTime = Time;
+
+	if (PowerUpManager->GetCurrentPowerUp())
+	{
+		PowerUpManager->RemovePowerUp();
+		return DamageAmount;
+	}
 
 	bIsDead = true;
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))

@@ -1,10 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/BotCollectablesManager.h"
+#include "Characters/Components/BotCollectablesManager.h"
 
 #include "Characters/BotCharacter.h"
-#include "Characters/Abilities/BaseBotAbility.h"
+#include "Characters/Components/BaseBotComponent.h"
+#include "Characters/Components/BotPowerUpManager.h"
+#include "Characters/PowerUps/BotPowerUp.h"
 #include "Components/CapsuleComponent.h"
 #include "Game/PlatformerPlayerState.h"
 #include "Items/Collectables/CollectableGearItem.h"
@@ -14,9 +16,8 @@
 void UBotCollectablesManager::BeginPlay()
 {
 	Super::BeginPlay();
-	Character = Cast<ABotCharacter>(GetOwner());
-	Character->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &UBotCollectablesManager::OnBeginOverlap);
-	PlayerController = Cast<APlayerController>(Character->GetController());
+	GetCharacter()->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &UBotCollectablesManager::OnBeginOverlap);
+	PlayerController = Cast<APlayerController>(GetCharacter()->GetController());
 	PlayerState = PlayerController->GetPlayerState<APlatformerPlayerState>();
 }
 
@@ -35,12 +36,9 @@ void UBotCollectablesManager::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 	{
 		const ACollectablePowerUpItem* PowerUp = Cast<ACollectablePowerUpItem>(OtherActor);
 
-		if (PowerUp && PowerUp->GetBotAbilityClass())
+		if (PowerUp && PowerUp->GetPowerUpClass())
 		{
-			UActorComponent* SpawnedComponent = Character->AddComponentByClass(PowerUp->GetBotAbilityClass(), false, FTransform::Identity, false);
-			UBaseBotAbility* SpawnedAbility = Cast<UBaseBotAbility>(SpawnedComponent);
-
-			
+			GetCharacter()->GetPowerUpManager()->CollectPowerUp(PowerUp->GetPowerUpClass());
 		}
 	}
 }

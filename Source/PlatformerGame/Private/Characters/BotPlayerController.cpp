@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Camera/SideScrollerCameraActor.h"
 #include "Characters/BotCharacter.h"
+#include "Characters/Components/BotPowerUpManager.h"
 
 void ABotPlayerController::BeginPlay()
 {
@@ -71,12 +72,13 @@ void ABotPlayerController::JumpReleased(const FInputActionValue& ActionValue)
 void ABotPlayerController::RunPressed(const FInputActionValue& ActionValue)
 {
 	Bot->SetRunEnabled(true);
-	Bot->ThrowObject();
+	Bot->GetPowerUpManager()->BeginInput();
 }
 
 void ABotPlayerController::RunReleased(const FInputActionValue& ActionValue)
 {
 	Bot->SetRunEnabled(false);
+	Bot->GetPowerUpManager()->EndInput();
 }
 
 void ABotPlayerController::StopJumping()

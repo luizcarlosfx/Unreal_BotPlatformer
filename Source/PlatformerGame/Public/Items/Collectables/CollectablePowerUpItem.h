@@ -6,7 +6,7 @@
 #include "Items/Collectables/CollectableItem.h"
 #include "CollectablePowerUpItem.generated.h"
 
-class UBaseBotAbility;
+class ABotPowerUp;
 /**
  * 
  */
@@ -17,9 +17,9 @@ class PLATFORMERGAME_API ACollectablePowerUpItem : public ACollectableItem
 
 public:
 	virtual ECollectableType GetType() override;
-	FORCEINLINE TSubclassOf<UBaseBotAbility> GetBotAbilityClass() const { return BotAbilityClass; }
+	FORCEINLINE TSubclassOf<ABotPowerUp> GetPowerUpClass() const { return PowerUpClass; }
 
 private:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UBaseBotAbility> BotAbilityClass;
+	TSubclassOf<ABotPowerUp> PowerUpClass;
 };
