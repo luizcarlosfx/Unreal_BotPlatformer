@@ -46,12 +46,12 @@ void ASpawnItemBlock::SpawnItem(const float& Timer)
 		return;
 
 	const FVector& ActorLocation = GetActorLocation();
-	ACollectableItem* Item = Cast<ACollectableItem>(GetWorld()->SpawnActor(ItemClass, &ActorLocation));
-	Item->OnSpawned();
-	Item->SetPhysicsEnabled(false);
-	SpawnedItem = Item;
+	SpawnedItem = Cast<ACollectableItem>(GetWorld()->SpawnActor(ItemClass, &ActorLocation));
 
-	const float& BounceMultiplier = Item->GetAutoCollectOnSpawn() ? 4 : 2;
+	SpawnedItem->OnSpawned();
+	SpawnedItem->SetPhysicsEnabled(false);
+
+	const float& BounceMultiplier = SpawnedItem->GetAutoCollectOnSpawn() ? 4 : 2;
 	const float& BounceAmount = GetBoxCollision()->GetScaledBoxExtent().Z * BounceMultiplier;
 	const FVector& TargetLocation = SpawnedItem->GetActorLocation() + SpawnedItem->GetActorUpVector() * BounceAmount;
 

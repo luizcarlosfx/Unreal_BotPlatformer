@@ -41,4 +41,5 @@ void APlatformerGameMode::Respawn()
 	Bot->Destroy();
 	RestartPlayer(Player);
 	Player->EnableInput(Player);
+	AssignOnPlayerDieEvent();
 }
