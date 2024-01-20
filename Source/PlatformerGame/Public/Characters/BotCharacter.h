@@ -37,6 +37,7 @@ public:
 	bool PlayMontage(UAnimMontage* Montage) const;
 	FORCEINLINE UBotPowerUpManager* GetPowerUpManager() const { return PowerUpManager; }
 	FORCEINLINE UBotCollectablesManager* GetCollectablesManager() const { return CollectablesManager; }
+	FORCEINLINE class UBotVisualsComponent* GetVisuals() const { return Visuals; }
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -45,18 +46,16 @@ private:
 	UBotPowerUpManager* PowerUpManager;
 	UPROPERTY(VisibleAnywhere)
 	UBotThrowComponent* ThrowComponent;
-
+	UPROPERTY(VisibleAnywhere)
+	UBotVisualsComponent* Visuals;
 	UPROPERTY(EditAnywhere)
 	float DamageInterval = 1;
-
 	UPROPERTY(EditAnywhere)
 	float JumpMinHoldTime = 0.1;
-
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* CameraTarget;
 
 	bool bJumpedThisFrame;
-
 	bool bIsDead = false;
-	double LastDamageTime = 0;
+	bool bCanTakeDamage = true;
 };

@@ -3,6 +3,7 @@
 
 #include "Characters/PowerUps/BotPowerUp.h"
 #include "Characters/BotCharacter.h"
+#include "Characters/Components/BotVisualsComponent.h"
 #include "Materials/MaterialInstance.h"
 
 void ABotPowerUp::AttachTo(ABotCharacter* Target)
@@ -11,10 +12,7 @@ void ABotPowerUp::AttachTo(ABotCharacter* Target)
 	const FAttachmentTransformRules Rules(EAttachmentRule::SnapToTarget, false);
 
 	if (CharacterMaterial)
-	{
-		PreviousCharacterMaterial = Mesh->GetMaterial(CharacterMaterialIndex);
-		Mesh->SetMaterial(CharacterMaterialIndex, CharacterMaterial);
-	}
+		Target->GetVisuals()->ApplyMaterial(CharacterMaterial);
 
 	Character = Target;
 	AttachToComponent(Mesh, Rules, CharacterSocketName);
@@ -22,8 +20,8 @@ void ABotPowerUp::AttachTo(ABotCharacter* Target)
 
 void ABotPowerUp::Remove()
 {
-	if (PreviousCharacterMaterial)
-		Character->GetMesh()->SetMaterial(CharacterMaterialIndex, PreviousCharacterMaterial);
+	if (CharacterMaterial)
+		Character->GetVisuals()->ResetMaterial();
 
 	Destroy();
 }

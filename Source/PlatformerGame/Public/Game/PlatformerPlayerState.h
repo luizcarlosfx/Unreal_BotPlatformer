@@ -9,6 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCollectGear, int, Gears);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGainLife, int, Lives);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDie);
 
 /**
  * 
@@ -25,6 +26,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Events")
 	FOnGainLife OnGainLife;
 
+	UPROPERTY(BlueprintAssignable, Category="Events")
+	FOnPlayerDie OnDie;
+
 	void CollectGears(uint32 amount);
 	void AdjustLife(int amount);
 
@@ -33,6 +37,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int GetGears() const { return Gears; }
+
+	void Died();
 
 private:
 	UPROPERTY(VisibleAnywhere)

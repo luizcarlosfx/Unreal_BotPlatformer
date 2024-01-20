@@ -6,6 +6,7 @@
 #include "Characters/Components/BotCollectablesManager.h"
 #include "Characters/Components/BotPowerUpManager.h"
 #include "Characters/Components/BotThrowComponent.h"
+#include "Characters/Components/BotVisualsComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -18,6 +19,7 @@ ABotCharacter::ABotCharacter()
 	CollectablesManager = CreateDefaultSubobject<UBotCollectablesManager>(TEXT("CollectablesManager"));
 	ThrowComponent = CreateDefaultSubobject<UBotThrowComponent>(TEXT("ThrowComponent"));
 	PowerUpManager = CreateDefaultSubobject<UBotPowerUpManager>(TEXT("PowerUpManager"));
+	Visuals = CreateDefaultSubobject<UBotVisualsComponent>(TEXT("Visuals"));
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->bConstrainToPlane = true;
 	Movement->SetPlaneConstraintNormal(FVector(0, 1, 0));
@@ -53,25 +55,30 @@ void ABotCharacter::Landed(const FHitResult& Hit)
 
 float ABotCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (bIsDead)
+	if (bIsDead || !bCanTakeDamage)
 		return 0;
-
-	const double Time = GetWorld()->TimeSeconds;
-
-	if (Time - LastDamageTime < DamageInterval)
-		return 0;
-
-	LastDamageTime = Time;
 
 	if (PowerUpManager->GetCurrentPowerUp())
 	{
 		PowerUpManager->RemovePowerUp();
+
+		// can't take damage for a time
+		GetVisuals()->SetBlinkEnabled(true);
+		bCanTakeDamage = false;
+		FTimerHandle Handle;
+		GetWorldTimerManager().SetTimer(Handle, [&]
+		                                {
+			                                bCanTakeDamage = true;
+			                                GetVisuals()->SetBlinkEnabled(false);
+		                                },
+		                                DamageInterval, false);
+
 		return DamageAmount;
 	}
 
 	bIsDead = true;
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-		PlayerController->DisableInput(PlayerController);
+	OnDie.Broadcast();
+
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 

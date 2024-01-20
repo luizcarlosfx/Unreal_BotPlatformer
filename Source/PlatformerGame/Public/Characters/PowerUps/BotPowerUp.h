@@ -23,15 +23,10 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* CharacterMaterial;
-	UPROPERTY(EditAnywhere)
-	int CharacterMaterialIndex = 0;
 
 	UPROPERTY(EditAnywhere)
 	FName CharacterSocketName = NAME_None;
 
 	UPROPERTY()
 	ABotCharacter* Character;
-
-	UPROPERTY()
-	UMaterialInterface* PreviousCharacterMaterial;
 };

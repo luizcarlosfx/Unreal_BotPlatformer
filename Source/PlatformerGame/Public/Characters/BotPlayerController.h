@@ -24,6 +24,7 @@ class PLATFORMERGAME_API ABotPlayerController : public APlayerController
 public:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* InPawn) override;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")

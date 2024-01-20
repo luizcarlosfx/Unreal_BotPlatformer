@@ -29,10 +29,18 @@ void ASpawnItemBlock::Bounce(const FVector& Direction)
 	const FVector& BouncePosition = Direction * BounceLength;
 
 	const float Time = BounceTime / 2;
-	TweenMesh(BouncePosition, Time, [&] { SpawnItem(); });
+	TweenMesh(BouncePosition, Time, [&]
+	{
+		SpawnedCount++;
+		if (SpawnedCount >= SpawnItemCount)
+		{
+			Mesh->SetMaterial(0, NoInteractionMaterial);
+		}
+	});
+	SpawnItem(BounceTime);
 }
 
-void ASpawnItemBlock::SpawnItem()
+void ASpawnItemBlock::SpawnItem(const float& Timer)
 {
 	if (!ItemClass)
 		return;
@@ -43,9 +51,11 @@ void ASpawnItemBlock::SpawnItem()
 	Item->SetPhysicsEnabled(false);
 	SpawnedItem = Item;
 
-	const FVector& TargetLocation = SpawnedItem->GetActorLocation() + SpawnedItem->GetActorUpVector() * GetBoxCollision()->GetScaledBoxExtent().Z * 2;
+	const float& BounceMultiplier = Item->GetAutoCollectOnSpawn() ? 4 : 2;
+	const float& BounceAmount = GetBoxCollision()->GetScaledBoxExtent().Z * BounceMultiplier;
+	const FVector& TargetLocation = SpawnedItem->GetActorLocation() + SpawnedItem->GetActorUpVector() * BounceAmount;
 
-	TweenItemLocation(TargetLocation, BounceTime, [&]
+	TweenItemLocation(TargetLocation, Timer, [&]
 	{
 		if (SpawnedItem->GetAutoCollectOnSpawn())
 		{
@@ -58,15 +68,12 @@ void ASpawnItemBlock::SpawnItem()
 			SpawnedItem->SetPhysicsEnabled(true);
 		}
 	});
-
-	if (SpawnCount < SpawnItems)
-		Mesh->SetMaterial(0, NoInteractionMaterial);
 }
 
 void ASpawnItemBlock::OnPlayerHit()
 {
 	Super::OnPlayerHit();
-	if (SpawnCount < SpawnItems)
+	if (SpawnedCount < SpawnItemCount)
 		Bounce(FVector::UpVector);
 }
 

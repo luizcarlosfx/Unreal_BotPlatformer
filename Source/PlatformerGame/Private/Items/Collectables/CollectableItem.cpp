@@ -54,6 +54,8 @@ void ACollectableItem::OnCollected()
 
 void ACollectableItem::OnSpawned()
 {
+	if (SpawnSound)
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SpawnSound, GetActorLocation());
 }
 
 void ACollectableItem::SetPhysicsEnabled(bool Enable)

@@ -22,7 +22,7 @@ public:
 protected:
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }
 	virtual void Bounce(const FVector& Direction);
-	virtual void SpawnItem();
+	virtual void SpawnItem(const float& Timer);
 	virtual void OnPlayerHit() override;
 
 private:
@@ -40,7 +40,7 @@ private:
 	TSubclassOf<ACollectableItem> ItemClass;
 
 	UPROPERTY(EditAnywhere)
-	int SpawnItems = 1;
+	int SpawnItemCount = 1;
 
 	UPROPERTY()
 	UMaterialInterface* DefaultMaterial;
@@ -48,7 +48,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* NoInteractionMaterial;
 
-	int SpawnCount = 0;
+	int SpawnedCount = 0;
 
 	UPROPERTY()
 	ACollectableItem* SpawnedItem;

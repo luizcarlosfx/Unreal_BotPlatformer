@@ -3,8 +3,10 @@
 
 #include "Enemies/BaseEnemyCharacter.h"
 
+#include "Characters/BotCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Enemies/EnemyMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ABaseEnemyCharacter::ABaseEnemyCharacter(const FObjectInitializer& ObjectInitializer) : Super(
 	ObjectInitializer.SetDefaultSubobjectClass(CharacterMovementComponentName, UEnemyMovementComponent::StaticClass()))
@@ -30,7 +32,13 @@ void ABaseEnemyCharacter::MoveBlockedBy(const FHitResult& Impact)
 	const FVector& Normal = Impact.ImpactNormal;
 
 	if (FVector::DotProduct(Forward, Normal) < 0)
-		Flip();
+	{
+		AActor* Actor = Impact.GetActor();
+		if (ABotCharacter* Bot = Cast<ABotCharacter>(Actor))
+			UGameplayStatics::ApplyDamage(Bot, 1, GetController(), this, UDamageType::StaticClass());
+		else
+			Flip();
+	}
 }
 
 void ABaseEnemyCharacter::OnNearLedge()

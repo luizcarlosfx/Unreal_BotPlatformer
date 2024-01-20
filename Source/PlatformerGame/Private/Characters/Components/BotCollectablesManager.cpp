@@ -12,12 +12,13 @@
 #include "Items/Collectables/CollectableGearItem.h"
 #include "Items/Collectables/CollectableItem.h"
 #include "Items/Collectables/CollectablePowerUpItem.h"
+#include "Kismet/GameplayStatics.h"
 
 void UBotCollectablesManager::BeginPlay()
 {
 	Super::BeginPlay();
 	GetCharacter()->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &UBotCollectablesManager::OnBeginOverlap);
-	PlayerController = Cast<APlayerController>(GetCharacter()->GetController());
+	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	PlayerState = PlayerController->GetPlayerState<APlatformerPlayerState>();
 }
 

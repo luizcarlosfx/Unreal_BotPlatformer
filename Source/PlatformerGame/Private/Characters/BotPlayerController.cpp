@@ -16,14 +16,22 @@ void ABotPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(InputContext, 0);
 	}
 
-	Bot = Cast<ABotCharacter>(GetCharacter());
-
 	if (!CameraClass)
 		return;
 
+	Bot = Cast<ABotCharacter>(GetCharacter());
 	SideScrollerCamera = GetWorld()->SpawnActor<ASideScrollerCameraActor>(CameraClass.Get());
 	SideScrollerCamera->Setup(this, Bot);
 }
+
+void ABotPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	Bot = Cast<ABotCharacter>(InPawn);
+	if (SideScrollerCamera)
+		SideScrollerCamera->Setup(this, Bot);
+}
+
 
 void ABotPlayerController::AxisReleased(const FInputActionValue& ActionValue)
 {
